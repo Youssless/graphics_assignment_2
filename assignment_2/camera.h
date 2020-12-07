@@ -1,7 +1,7 @@
 #pragma once
 
 #include "base_component.h"
-
+#include "stack"
 
 class Camera : public BaseComponent {
 public:
@@ -11,13 +11,18 @@ public:
 	GLfloat speed;
 	glm::mat4 view, projection;
 	
-	void update(const GLfloat &aspect_ratio);
+
+	void create_component(const GLuint &program);
+
+	void display(const GLfloat &aspect_ratio);
 	void translate(int k);
 
 	void viewmode(GLint vm);
 
 private:
+	std::stack<glm::mat4> model;
 	glm::vec3 eye, center, up;
+	GLuint view_id, projection_id, model_id;
 
 	void translateX(std::function<float (float, float)> op);
 	void translateY(std::function<float (float, float)> op);

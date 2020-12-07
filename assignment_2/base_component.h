@@ -12,7 +12,11 @@
 
 class BaseComponent {
 public:
+	virtual void create_component(const GLuint &program) = 0;
+
 	virtual void translateX(std::function<float (float, float)> op) = 0;
 	virtual void translateY(std::function<float (float, float)> op) = 0;
 	virtual void translateZ(std::function<float (float, float)> op) = 0;
+
+
 };

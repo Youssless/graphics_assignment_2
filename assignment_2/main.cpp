@@ -10,6 +10,7 @@
 // components & terrain includes
 #include "terrain_object.h"
 #include "camera.h"
+#include "light.h"
 
 #include "uniform_ids.h"
 
@@ -23,6 +24,7 @@ Uniforms uids;
 
 Camera* camera;
 terrain_object* terrain;
+Light* light;
 Sphere sphere;
 
 void init(GLWrapper* glw) {
@@ -45,14 +47,19 @@ void init(GLWrapper* glw) {
 	// get the uids
 	uids = Uniforms(program);
 	camera = new Camera();
+	camera->create_component(program);
 	terrain = new terrain_object(4, 1.f, 2.f);
 	terrain->createTerrain(200.f, 200.f, 2.f, 2.f);
 	terrain->setColour(glm::vec3(0.0f, 1.0f, 1.0f));
 	terrain->createObject();
+
+	light = new Light();
+	light->create_component(program);
+	
 }
 
 void display() {
-	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+	glClearColor(0.f, 0.f, 0.f, 0.f);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -60,27 +67,29 @@ void display() {
 
 	glUseProgram(program);
 
-	camera->update(aspect_ratio);
-
-	// Send our projection and view uniforms to the currently bound shader
-	// I do that here because they are the same for all objects
-
-	// camera uniforms
-	glUniformMatrix4fv(uids.viewID, 1, GL_FALSE, &(camera->view[0][0]));
-	glUniformMatrix4fv(uids.projectionID, 1, GL_FALSE, &(camera->projection[0][0]));
-
 	std::stack<glm::mat4> model;
 	model.push(glm::mat4(1.f));
 
-	glUniformMatrix4fv(uids.modelID, 1, GL_FALSE, &model.top()[0][0]);
+	camera->display(aspect_ratio);
 
-	terrain->drawObject(0);
+	model.push(model.top());
+	{
+		/*model.top() = glm::translate(model.top(), glm::vec3(1.f));
+		model.top() = glm::scale(model.top(), glm::vec3(0.05f, 0.05f, 0.05f));
+		glUniformMatrix4fv(uids.modelID, 1, GL_FALSE, &model.top()[0][0]);*/
+		light->display(camera->view, model.top(), uids.normal_trans_id);
+	}
+	model.pop();
 
-
-	// lighting uniforms
-	//glUniform3fv(uids.lightposID, 1, &(light->lightpos[0]));
-	//glUniform4fv(uids.ambientColourID, 1, &(light->ambientColor[0]));
-	//glUniform1f(uids.shininessID, light->shininess);
+	model.push(model.top());
+	{
+		glm::mat3 normalmatrix = glm::transpose(glm::inverse(glm::mat3(camera->view * model.top())));
+		glUniformMatrix3fv(uids.normal_trans_id, 1, GL_FALSE, &normalmatrix[0][0]);
+		terrain->drawObject(0);
+		glUniformMatrix4fv(uids.modelID, 1, GL_FALSE, &model.top()[0][0]);
+	}
+	model.pop();
+	
 
 	glDisableVertexAttribArray(0);
 	glUseProgram(0);

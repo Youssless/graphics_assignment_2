@@ -9,6 +9,7 @@ public:
 	GLuint projectionID;
 	GLuint modelID;
 	GLuint shininessID;
+	GLuint normal_trans_id;
 
 	Uniforms() {
 		ambient_colID = 0;
@@ -17,6 +18,7 @@ public:
 		modelID = 0;
 		projectionID = 0;
 		shininessID = 0;
+		normal_trans_id = 0;
 	}
 
 	Uniforms(const GLuint& program) {
@@ -26,5 +28,6 @@ public:
 		modelID = glGetUniformLocation(program, "model");
 		projectionID = glGetUniformLocation(program, "projection");
 		shininessID = glGetUniformLocation(program, "shininess");
+		normal_trans_id = glGetUniformLocation(program, "normal_transformation");
 	}
 };

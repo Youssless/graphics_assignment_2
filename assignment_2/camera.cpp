@@ -10,6 +10,9 @@ Camera::Camera() {
 
 	view = glm::mat4(1.0);
 	projection = glm::mat4(1.0);
+
+	view_id = 0;
+	projection_id = 0;
 }
 
 Camera::~Camera() {
@@ -17,16 +20,31 @@ Camera::~Camera() {
 }
 
 /*
-	aspect_ratio = current aspect ratio of the window
-	updates the vertex shader with the new camera positions
+*	send ids to the shader
+*	params:
+*		const GLuint &program : current shader program reference
 */
-void Camera::update(const GLfloat &aspect_ratio) {
+void Camera::create_component(const GLuint &program) {
+	projection_id = glGetUniformLocation(program, "projection");
+	view_id = glGetUniformLocation(program, "view");
+}
+
+/*
+*	updates the vertex shader with the current camera positions, shader computes the camera position
+*		to display the camera
+*	params:
+*		aspect ratio to update the perspective when the widow size changes
+*/
+void Camera::display(const GLfloat &aspect_ratio) {
 	projection = glm::perspective(glm::radians(30.0f), aspect_ratio, 0.1f, 100.0f);
+	glUniformMatrix4fv(projection_id, 1, GL_FALSE, &projection[0][0]);
+
 	view = glm::lookAt(
 		eye,
 		center,
 		up
 	);
+	glUniformMatrix4fv(view_id, 1, GL_FALSE, &view[0][0]);
 }
 
 void Camera::viewmode(GLint vm) {
