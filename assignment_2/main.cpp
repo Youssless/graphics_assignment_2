@@ -74,14 +74,7 @@ void display() {
 
 	model.push(model.top());
 	{
-		model.top() = glm::translate(model.top(), glm::vec3(1.f));
-		model.top() = glm::scale(model.top(), glm::vec3(0.05f, 0.05f, 0.05f));
-		glUniformMatrix4fv(uids.model_id, 1, GL_FALSE, &model.top()[0][0]);
-
-		glm::mat3 normal_transformation = glm::transpose(glm::inverse(glm::mat3(camera->view * model.top())));
-		glUniformMatrix3fv(uids.normal_trans_id, 1, GL_FALSE, &normal_transformation[0][0]);
-
-		light->display(camera->view, model.top(), uids.normal_trans_id);
+		light->display(camera->view, model.top(), uids);
 	}
 	model.pop();
 

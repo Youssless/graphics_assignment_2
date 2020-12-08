@@ -14,11 +14,14 @@ uniform vec4 lightpos;
 out vec4 fcolour;
 out vec3 fV, fnormal, f_lightdir;
 
+uniform uint attenuationmode;
+out float fattenuation;
+
 void main() {
 
 	vec4 position_h = vec4(position, 1.0);
 
-	fcolour = vec4(colour, 1.f);
+	fcolour = vec4(colour, 1.0);
 
 	/*TRANSFORMING AND NORMALISING THE NORMAL AND LIGHT DIRECTION*/
 	// define the modelview transformation
@@ -37,6 +40,22 @@ void main() {
 	f_lightdir = normalize(L);
 	fV = normalize(-P.xyz);
 	
+	/*ATTENUATION*/
+	float attenuation;
+	float distance_to_light = length(L);
+	if (attenuationmode == 1) {
+		attenuation = 1.0;
+		fattenuation = attenuation;
+	}
+	else if (attenuationmode == 0){ 
+		float k1 = 0.5;
+		float k2 = 0.5;
+		float k3 = 0.5;
+
+		attenuation = 1.0/(k1 + k2*distance_to_light + k3*pow(distance_to_light, 2));
+		fattenuation = attenuation;
+	}
+
 	// Define the vertex position
 	gl_Position = projection * view * model * position_h;
 }

@@ -1,7 +1,8 @@
 #include "light.h"
+#include <iostream>
 
 Light::Light() {
-	lightdir = glm::vec3(1.f);
+	lightdir = glm::vec3(1.f, 1.f, 0.f);
 	lightpos = glm::vec4(1.f);
 
 	lightpos_id = 0;
@@ -9,10 +10,14 @@ Light::Light() {
 	shininess_id = 0;
 	specular_colour_id = 0;
 	normal_trans_id = 0;
+	emitmode_id = 0;
 
 	ambient_colour = glm::vec4(0.f);
 	specular_colour = glm::vec4(1.f);
 	shininess = 0.f;
+
+	emitmode = 0;
+	attenuationmode = 0;
 
 	light_src = Sphere(false);
 }
@@ -30,8 +35,11 @@ void Light::create_component(const GLuint &program) {
 	shininess_id = glGetUniformLocation(program, "shininess");
 	specular_colour_id = glGetUniformLocation(program, "specular_colour");
 	normal_trans_id = glGetUniformLocation(program, "normal_transformation");
+	emitmode_id = glGetUniformLocation(program, "emitmode");
+	attenuationmode_id = glGetUniformLocation(program, "attenuationmode");
 
 	light_src.makeSphere(120, 120);
+	std::cout << emitmode_id << std::endl;
 }
 
 
@@ -39,8 +47,20 @@ void Light::create_component(const GLuint &program) {
 *	update and display the light by passing lighting vars to the frag and vert shaders
 *	params:
 *		const glm::mat4 &view : pass the current camera view to calculate the light direction
+*		glm::mat4 &model : model for the light_src
+*		const SharedUniforms &uids : shared uniforms between all objects, used for model_id and normal_trans_id
 */
-void Light::display(const glm::mat4 &view, glm::mat4 &model, const GLuint& normal_trans_id) {
+void Light::display(const glm::mat4 &view, glm::mat4 &model, const SharedUniforms &uids) {
+
+	// transform and scale light_src
+	model = glm::translate(model, lightdir);
+	model = glm::scale(model, glm::vec3(0.05f, 0.05f, 0.05f));
+	glUniformMatrix4fv(uids.model_id, 1, GL_FALSE, &model[0][0]);
+
+	// vars to send to the shader for lighting calculations
+	glm::mat3 normal_transformation = glm::transpose(glm::inverse(glm::mat3(view * model)));
+	glUniformMatrix3fv(uids.normal_trans_id, 1, GL_FALSE, &normal_transformation[0][0]);
+
 	lightpos = view * glm::vec4(lightdir, 1.f);
 	glUniform4fv(lightpos_id, 1, &lightpos[0]);
 
@@ -53,7 +73,16 @@ void Light::display(const glm::mat4 &view, glm::mat4 &model, const GLuint& norma
 	shininess = 8.f;
 	glUniform1fv(shininess_id, 1, &shininess);
 
+	attenuationmode = 1;
+	glUniform1ui(attenuationmode_id, attenuationmode);
+
+	// draw the light src, switching between emitmodes only applies the emissve on light_src rather
+	//	than the whole terrain
+	emitmode = 1;
+	glUniform1ui(emitmode_id, emitmode);
 	light_src.drawSphere(0);
+	emitmode = 0;
+	glUniform1ui(emitmode_id, emitmode);
 }
 
 void Light::translateX(std::function<float(float, float)> op) {}
