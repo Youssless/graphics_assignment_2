@@ -2,7 +2,7 @@
 #include <iostream>
 
 Light::Light() {
-	lightdir = glm::vec3(1.f, 1.f, 0.f);
+	lightdir = glm::vec3(3.f, 3.f, 0.f);
 	lightpos = glm::vec4(1.f);
 
 	lightpos_id = 0;
@@ -54,7 +54,7 @@ void Light::display(const glm::mat4 &view, glm::mat4 &model, const SharedUniform
 
 	// transform and scale light_src
 	model = glm::translate(model, lightdir);
-	model = glm::scale(model, glm::vec3(0.05f, 0.05f, 0.05f));
+	model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
 	glUniformMatrix4fv(uids.model_id, 1, GL_FALSE, &model[0][0]);
 
 	// vars to send to the shader for lighting calculations

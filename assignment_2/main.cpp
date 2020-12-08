@@ -7,25 +7,12 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <stack>
 
-// components & terrain includes
-#include "terrain_object.h"
-#include "camera.h"
-#include "light.h"
-
-#include "uniform_ids.h"
-
-#include "sphere_tex.h"
+#include "scene.h"
 
 GLuint program, vao;
 GLfloat aspect_ratio;
 
-
-SharedUniforms uids;
-
-Camera* camera;
-terrain_object* terrain;
-Light* light;
-Sphere sphere;
+Scene *scene;
 
 void init(GLWrapper* glw) {
 
@@ -44,17 +31,7 @@ void init(GLWrapper* glw) {
 		exit(0);
 	}
 
-	// get the uids
-	uids = SharedUniforms(program);
-	camera = new Camera();
-	camera->create_component(program);
-	terrain = new terrain_object(4, 1.f, 2.f);
-	terrain->createTerrain(200.f, 200.f, 2.f, 2.f);
-	terrain->setColour(glm::vec3(0.0f, 1.0f, 1.0f));
-	terrain->createObject();
-
-	light = new Light();
-	light->create_component(program);
+	scene = new Scene(program);
 	
 }
 
@@ -67,28 +44,7 @@ void display() {
 
 	glUseProgram(program);
 
-	std::stack<glm::mat4> model;
-	model.push(glm::mat4(1.f));
-
-	camera->display(aspect_ratio);
-
-	model.push(model.top());
-	{
-		light->display(camera->view, model.top(), uids);
-	}
-	model.pop();
-
-	model.push(model.top());
-	{
-		glUniformMatrix4fv(uids.model_id, 1, GL_FALSE, &model.top()[0][0]);
-
-		glm::mat3 normalmatrix = glm::transpose(glm::inverse(glm::mat3(camera->view * model.top())));
-		glUniformMatrix3fv(uids.normal_trans_id, 1, GL_FALSE, &normalmatrix[0][0]);
-		terrain->drawObject(0);
-		
-	}
-	model.pop();
-	
+	scene->display(aspect_ratio);
 
 	glDisableVertexAttribArray(0);
 	glUseProgram(0);
@@ -125,21 +81,7 @@ static void keyCallback(GLFWwindow* window, int key, int s, int action, int mods
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
 
-	camera->translate(key);
-
-	if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
-		camera->viewmode(1);
-		std::cout << "view mode " << std::to_string(1) << " (default view)" << std::endl;
-	}
-	else if (key == GLFW_KEY_2 && action == GLFW_PRESS) {
-		camera->viewmode(2);
-		std::cout << "view mode " << std::to_string(2) << " (back view)" << std::endl;
-	}
-	else if (key == GLFW_KEY_3 && action == GLFW_PRESS) {
-		camera->viewmode(3);
-		std::cout << "view mode " << std::to_string(3) << " (top view)" << std::endl;
-	}
-
+	scene->camera_keys(key, action);
 }
 
 
@@ -168,5 +110,6 @@ int main(int argc, char* argv[]) {
 	glw->eventLoop();
 
 	delete(glw);
+	delete(scene);
 	return 0;
 }

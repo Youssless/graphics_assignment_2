@@ -66,6 +66,9 @@
     <ClCompile Include="..\common\sphere_tex.cpp">
       <Filter>Source Files\shapes</Filter>
     </ClCompile>
+    <ClCompile Include="scene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\wrapper_glfw.h">
@@ -88,6 +91,9 @@
     </ClInclude>
     <ClInclude Include="light.h">
       <Filter>Header Files\component</Filter>
+    </ClInclude>
+    <ClInclude Include="scene.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

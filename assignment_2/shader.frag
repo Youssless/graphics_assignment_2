@@ -32,5 +32,5 @@ void main() {
 	
 	
 
-	output_col = fattenuation*(ambient + diffuse_lighting + vec4(specular_lighting, 1.0)) + vec4(emissive, 1.0);
+	output_col = (fattenuation)*(ambient + diffuse_lighting + vec4(specular_lighting, 1.0)) + vec4(emissive, 1.0) + vec4(global_ambient, 1.0);
 }
