@@ -53,11 +53,7 @@ void Light::display(const glm::mat4 &view, glm::mat4 &model, const GLuint& norma
 	shininess = 8.f;
 	glUniform1fv(shininess_id, 1, &shininess);
 
-	glm::mat3 normal_transformation = glm::transpose(glm::inverse(glm::mat3(view * model)));
-	glUniformMatrix3fv(normal_trans_id, 1, GL_FALSE, &normal_transformation[0][0]);
-	
-	
-	//light_src.drawSphere(0);
+	light_src.drawSphere(0);
 }
 
 void Light::translateX(std::function<float(float, float)> op) {}
