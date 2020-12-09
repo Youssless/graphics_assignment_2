@@ -57,9 +57,6 @@
     <ClCompile Include="terrain_object.cpp">
       <Filter>Source Files\terrain</Filter>
     </ClCompile>
-    <ClCompile Include="tiny_loader.cpp">
-      <Filter>Source Files\util</Filter>
-    </ClCompile>
     <ClCompile Include="light.cpp">
       <Filter>Source Files\component</Filter>
     </ClCompile>
@@ -68,6 +65,9 @@
     </ClCompile>
     <ClCompile Include="scene.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tiny_loader_texture.cpp">
+      <Filter>Source Files\util</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -83,9 +83,6 @@
     <ClInclude Include="terrain_object.h">
       <Filter>Header Files\terrain</Filter>
     </ClInclude>
-    <ClInclude Include="tiny_loader.h">
-      <Filter>Header Files\util</Filter>
-    </ClInclude>
     <ClInclude Include="uniform_ids.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
@@ -94,6 +91,9 @@
     </ClInclude>
     <ClInclude Include="scene.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tiny_loader_texture.h">
+      <Filter>Header Files\terrain</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

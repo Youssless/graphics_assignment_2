@@ -2,7 +2,7 @@
 #include <iostream>
 
 Camera::Camera() {
-	eye = glm::vec3(18.0f, 6.0f, 0.0f);
+	eye = glm::vec3(0.0f, 6.0f, 18.0f);
 	center = glm::vec3(0.0f, 0.0f, 0.0f);
 	up = glm::vec3(0.0f, 1.0f, 0.0f);
 
@@ -74,12 +74,12 @@ void Camera::viewmode(GLint vm) {
 	translates the camera depending on the key input
 */
 void Camera::translate(int k) {
-	if (k == 'W') translateY(std::minus<float>());
-	if (k == 'D') translateX(std::minus<float>());
-	if (k == 'A') translateX(std::plus<float>());
-	if (k == 'S') translateY(std::plus<float>());
-	if (k == GLFW_KEY_UP) translateZ(std::minus<float>());
-	if (k == GLFW_KEY_DOWN) translateZ(std::plus<float>());
+	if (k == 'W') translateY(std::plus<float>());
+	if (k == 'D') translateZ(std::minus<float>());
+	if (k == 'A') translateZ(std::plus<float>());
+	if (k == 'S') translateY(std::minus<float>());
+	if (k == GLFW_KEY_UP) translateX(std::minus<float>());
+	if (k == GLFW_KEY_DOWN) translateX (std::plus<float>());
 }
 
 /*

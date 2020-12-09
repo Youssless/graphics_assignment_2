@@ -2,7 +2,7 @@
 #include <iostream>
 
 Light::Light() {
-	lightdir = glm::vec3(3.f, 3.f, 0.f);
+	lightdir = glm::vec3(0.f, 2.f, 1.f);
 	lightpos = glm::vec4(1.f);
 
 	lightpos_id = 0;
@@ -15,6 +15,7 @@ Light::Light() {
 	ambient_colour = glm::vec4(0.f);
 	specular_colour = glm::vec4(1.f);
 	shininess = 0.f;
+	step = 0.1f;
 
 	emitmode = 0;
 	attenuationmode = 0;
@@ -71,7 +72,7 @@ void Light::display(const glm::mat4 &view, glm::mat4 &model, const SharedUniform
 	glUniform4fv(specular_colour_id, 1, &specular_colour[0]);
 
 	shininess = 8.f;
-	glUniform1fv(shininess_id, 1, &shininess);
+	glUniform1f(shininess_id, shininess);
 
 	attenuationmode = 1;
 	glUniform1ui(attenuationmode_id, attenuationmode);
@@ -85,6 +86,23 @@ void Light::display(const glm::mat4 &view, glm::mat4 &model, const SharedUniform
 	glUniform1ui(emitmode_id, emitmode);
 }
 
-void Light::translateX(std::function<float(float, float)> op) {}
-void Light::translateY(std::function<float(float, float)> op) {}
-void Light::translateZ(std::function<float(float, float)> op) {}
+void Light::translate(int k) {
+	if (k == 'W') translateY(std::plus<float>());
+	if (k == 'D') translateZ(std::minus<float>());
+	if (k == 'A') translateZ(std::plus<float>());
+	if (k == 'S') translateY(std::minus<float>());
+	if (k == GLFW_KEY_UP) translateX(std::minus<float>());
+	if (k == GLFW_KEY_DOWN) translateX(std::plus<float>());
+}
+
+void Light::translateX(std::function<float(float, float)> op) {
+	lightdir = lightdir + glm::vec3(op(0.f, step), 0.f, 0.f);
+}
+
+void Light::translateY(std::function<float(float, float)> op) {
+	lightdir = lightdir + glm::vec3(0.f, op(0.f, step), 0.f);
+}
+
+void Light::translateZ(std::function<float(float, float)> op) {
+	lightdir = lightdir + glm::vec3(0.f, 0.f, op(0.f, step));
+}

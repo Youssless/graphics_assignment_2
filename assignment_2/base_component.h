@@ -18,6 +18,4 @@ public:
 	virtual void translateX(std::function<float (float, float)> op) = 0;
 	virtual void translateY(std::function<float (float, float)> op) = 0;
 	virtual void translateZ(std::function<float (float, float)> op) = 0;
-
-
 };

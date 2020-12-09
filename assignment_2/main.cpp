@@ -13,12 +13,14 @@ GLuint program, vao;
 GLfloat aspect_ratio;
 
 Scene *scene;
+GLuint move_mode;
 
 void init(GLWrapper* glw) {
 
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
 	aspect_ratio = 1024.f / 768.f;
+	move_mode = 0;
 
 	glw->set_title("nanimo");
 
@@ -81,7 +83,18 @@ static void keyCallback(GLFWwindow* window, int key, int s, int action, int mods
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
 
-	scene->camera_keys(key, action);
+	if (key == 'L' && action == GLFW_PRESS) move_mode = 8;
+	if (key == 'C' && action == GLFW_PRESS) move_mode = 9;
+
+	if (move_mode == 8) { 
+		scene->light_keys(key, action); 
+		std::cout << "[move_mode = 8] moving light" << std::endl;
+	}
+
+	if (move_mode == 9) { 
+		scene->camera_keys(key, action); 
+		std::cout << "[move_mode = 9] moving camera" << std::endl;
+	}
 }
 
 

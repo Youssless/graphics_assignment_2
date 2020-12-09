@@ -3,7 +3,7 @@
 #include "camera.h"
 #include "light.h"
 #include "terrain_object.h"
-#include "tiny_loader.h"
+#include "tiny_loader_texture.h"
 
 class Scene {
 public:
@@ -13,12 +13,14 @@ public:
 	void display(float aspect_ratio);
 
 	void camera_keys(int key, int action);
+	void light_keys(int key, int action);
 
 private:
 	Camera *camera;
 	Light *light;
-	terrain_object* terrain;
+	terrain_object *terrain;
 	SharedUniforms uids;
-	TinyObjLoader* pyramids;
+	TinyObjLoader *pyramids;
+	TinyObjLoader *sphyinx;
 
 };

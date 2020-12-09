@@ -15,12 +15,16 @@ public:
 	void create_component(const GLuint &program);
 	void display(const glm::mat4& view, glm::mat4 &model, const SharedUniforms& uids);
 
+	void translate(int k);
+
 private:
 	glm::vec4 lightpos, ambient_colour, specular_colour;
 	glm::vec3 lightdir;
-	GLfloat shininess;
+	GLfloat shininess, step;
 	Sphere light_src;
 	GLuint emitmode, attenuationmode;
+
+	
 
 	void translateX(std::function<float(float, float)> op);
 	void translateY(std::function<float(float, float)> op);
