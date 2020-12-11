@@ -43,6 +43,12 @@
     <Filter Include="Source Files\shapes">
       <UniqueIdentifier>{36e86309-0b93-47cf-9f83-73f834d356fc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\texture">
+      <UniqueIdentifier>{ce8c9f85-db0f-4e04-a740-5c13ff2bef27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\texture">
+      <UniqueIdentifier>{c6782d0d-0b23-491c-95d2-6f312d2a4f32}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -69,6 +75,9 @@
     <ClCompile Include="tiny_loader_texture.cpp">
       <Filter>Source Files\util</Filter>
     </ClCompile>
+    <ClCompile Include="texture.cpp">
+      <Filter>Source Files\texture</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\wrapper_glfw.h">
@@ -94,6 +103,9 @@
     </ClInclude>
     <ClInclude Include="tiny_loader_texture.h">
       <Filter>Header Files\terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="texture.h">
+      <Filter>Header Files\texture</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

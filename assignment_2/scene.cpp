@@ -19,6 +19,20 @@ Scene::Scene(const GLuint &program) {
 
 	sphyinx = new TinyObjLoader();
 	sphyinx->load_obj("..\\obj\\sphyinx.obj");
+
+
+	/*glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);*/
+
+	try {
+		texture.load("..\\textures\\sand.png", texid, true);
+	}
+	catch (std::exception& e) {
+		std::cout << e.what() << std::endl;
+	}
+
+	int loc = glGetUniformLocation(program, "tex1");
+	if (loc > 0) glUniform1i(loc, 0);
 }
 
 Scene::~Scene() {
@@ -43,6 +57,7 @@ void Scene::display(float aspect_ratio) {
 	}
 	model.pop();
 
+	texture.bind_texture(texid);
 	// display terrain
 	model.push(model.top());
 	{
@@ -55,6 +70,7 @@ void Scene::display(float aspect_ratio) {
 	}
 	model.pop();
 
+	
 	// display pyramids
 	model.push(model.top());
 	{
@@ -69,7 +85,10 @@ void Scene::display(float aspect_ratio) {
 		pyramids->drawObject(0);
 	}
 	model.pop();
+	
+	
 
+	
 	// display sphyinx
 	model.push(model.top());
 	{
@@ -84,6 +103,7 @@ void Scene::display(float aspect_ratio) {
 		sphyinx->drawObject(0);
 	}
 	model.pop();
+	texture.unbind_texture();
 
 }
 

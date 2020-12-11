@@ -162,6 +162,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="scene.cpp" />
     <ClCompile Include="terrain_object.cpp" />
+    <ClCompile Include="texture.cpp" />
     <ClCompile Include="tiny_loader_texture.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -171,6 +172,7 @@
     <ClInclude Include="light.h" />
     <ClInclude Include="scene.h" />
     <ClInclude Include="terrain_object.h" />
+    <ClInclude Include="texture.h" />
     <ClInclude Include="tiny_loader_texture.h" />
     <ClInclude Include="uniform_ids.h" />
   </ItemGroup>

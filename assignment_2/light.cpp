@@ -2,7 +2,7 @@
 #include <iostream>
 
 Light::Light() {
-	lightdir = glm::vec3(0.f, 2.f, 1.f);
+	lightdir = glm::vec3(0.f, 10.f, 10.f);
 	lightpos = glm::vec4(1.f);
 
 	lightpos_id = 0;
@@ -74,7 +74,7 @@ void Light::display(const glm::mat4 &view, glm::mat4 &model, const SharedUniform
 	shininess = 8.f;
 	glUniform1f(shininess_id, shininess);
 
-	attenuationmode = 1;
+	attenuationmode = 0;
 	glUniform1ui(attenuationmode_id, attenuationmode);
 
 	// draw the light src, switching between emitmodes only applies the emissve on light_src rather

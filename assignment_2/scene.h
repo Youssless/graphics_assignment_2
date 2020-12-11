@@ -4,6 +4,7 @@
 #include "light.h"
 #include "terrain_object.h"
 #include "tiny_loader_texture.h"
+#include "texture.h"
 
 class Scene {
 public:
@@ -22,5 +23,8 @@ private:
 	SharedUniforms uids;
 	TinyObjLoader *pyramids;
 	TinyObjLoader *sphyinx;
+	Texture texture;
+
+	GLuint texid;
 
 };

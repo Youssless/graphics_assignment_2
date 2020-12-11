@@ -4,6 +4,7 @@
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec3 colour;		// Not used
 layout(location = 2) in vec3 normal;
+layout(location = 3) in vec2 texcoords;
 
 // Uniform variables are passed in from the application
 uniform mat4 model, view, projection;
@@ -12,16 +13,21 @@ uniform mat3 normal_transformation;
 uniform vec4 lightpos;
 
 out vec4 fcolour;
+uniform vec4 ambient_colour;
+
 out vec3 fV, fnormal, f_lightdir;
 
 uniform uint attenuationmode;
 out float fattenuation;
 
+out vec2 ftexcoords;
+
 void main() {
 
 	vec4 position_h = vec4(position, 1.0);
 
-	fcolour = vec4(colour, 1.0);
+	//fcolour = vec4(colour, 1.0)*ambient_colour;
+	fcolour = ambient_colour;
 
 	/*TRANSFORMING AND NORMALISING THE NORMAL AND LIGHT DIRECTION*/
 	// define the modelview transformation
@@ -53,8 +59,10 @@ void main() {
 		float k3 = 0.5;
 
 		attenuation = 1.0/(k1 + k2*distance_to_light + k3*pow(distance_to_light, 2));
-		fattenuation = attenuation;
+		fattenuation = 40*attenuation;
 	}
+
+	ftexcoords = vec2(texcoords.x, texcoords.y);
 
 	// Define the vertex position
 	gl_Position = projection * view * model * position_h;
