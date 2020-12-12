@@ -9,7 +9,7 @@
 
 #include "scene.h"
 
-GLuint program, vao;
+GLuint program, skybox_program, vao;
 GLfloat aspect_ratio;
 
 Scene *scene;
@@ -33,12 +33,21 @@ void init(GLWrapper* glw) {
 		exit(0);
 	}
 
-	scene = new Scene(program);
+	try {
+		skybox_program = glw->LoadShader("skybox.vert", "skybox.frag");
+	}
+	catch (std::exception& e) {
+		std::cout << e.what() << std::endl;
+		std::cin.ignore();
+		exit(0);
+	}
+
+	scene = new Scene(program, skybox_program);
 	
 }
 
 void display() {
-	glClearColor(0.f, 0.f, 0.f, 0.f);
+	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -48,8 +57,28 @@ void display() {
 
 	scene->display(aspect_ratio);
 
+	
+	glUseProgram(0);
+
+	//glDepthMask(GL_FALSE);
+	//glDisable(GL_DEPTH_TEST);
+	//glDepthMask(GL_FALSE);
+	glDepthFunc(GL_LEQUAL);
+	glUseProgram(skybox_program);
+
+	scene->display_skybox(aspect_ratio);
+	
+	
+
 	glDisableVertexAttribArray(0);
 	glUseProgram(0);
+	glDepthFunc(GL_LESS);
+	//glEnable(GL_DEPTH_TEST);
+	
+	//glDepthFunc(GL_LESS);
+
+	
+	
 }
 
 static void reshape(GLFWwindow* window, int w, int h)

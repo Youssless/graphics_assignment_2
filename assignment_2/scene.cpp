@@ -1,6 +1,6 @@
 #include "scene.h"
 
-Scene::Scene(const GLuint &program) {
+Scene::Scene(const GLuint &program, const GLuint &skybox_program) {
 	uids = SharedUniforms(program);
 
 	camera = new Camera();
@@ -20,6 +20,11 @@ Scene::Scene(const GLuint &program) {
 	sphyinx = new TinyObjLoader();
 	sphyinx->load_obj("..\\obj\\sphyinx.obj");
 
+	skybox = new Skybox(skybox_program);
+	skybox->create();
+
+	skybox_camera = new Camera();
+	skybox_camera->create_component(skybox_program);
 
 	/*glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);*/
@@ -41,6 +46,7 @@ Scene::~Scene() {
 	if (terrain) delete(terrain);
 	if (pyramids) delete(pyramids);
 	if (sphyinx) delete(sphyinx);
+	if (skybox) delete(skybox);
 }
 
 void Scene::display(float aspect_ratio) {
@@ -50,7 +56,7 @@ void Scene::display(float aspect_ratio) {
 	// display camera
 	camera->display(aspect_ratio);
 
-	// display light source
+	//// display light source
 	model.push(model.top());
 	{
 		light->display(camera->view, model.top(), uids);
@@ -105,6 +111,11 @@ void Scene::display(float aspect_ratio) {
 	model.pop();
 	texture.unbind_texture();
 
+}
+
+void Scene::display_skybox(float aspect_ratio) {
+	skybox_camera->display(aspect_ratio);
+	skybox->display();
 }
 
 void Scene::camera_keys(int key, int action) {

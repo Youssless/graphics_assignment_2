@@ -2,8 +2,8 @@
 #include <iostream>
 
 Camera::Camera() {
-	eye = glm::vec3(0.0f, 6.0f, 18.0f);
-	center = glm::vec3(0.0f, 0.0f, 0.0f);
+	eye = glm::vec3(0.0f, 0.0f, 0.0f);
+	center = glm::vec3(0.0f, 0.0f, -1.0f);
 	up = glm::vec3(0.0f, 1.0f, 0.0f);
 
 	speed = 0.1f;
