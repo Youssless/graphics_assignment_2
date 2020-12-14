@@ -2,8 +2,8 @@
 #include <iostream>
 
 Camera::Camera() {
-	eye = glm::vec3(0.0f, 0.0f, 0.0f);
-	center = glm::vec3(0.0f, 0.0f, -1.0f);
+	eye = glm::vec3(0.0f, 9.0f, 40.0f);
+	center = glm::vec3(0.0f, 2.0f, 0.0f);
 	up = glm::vec3(0.0f, 1.0f, 0.0f);
 
 	speed = 0.1f;
@@ -75,11 +75,11 @@ void Camera::viewmode(GLint vm) {
 */
 void Camera::translate(int k) {
 	if (k == 'W') translateY(std::plus<float>());
-	if (k == 'D') translateZ(std::minus<float>());
-	if (k == 'A') translateZ(std::plus<float>());
+	if (k == 'D') translateX(std::plus<float>());
+	if (k == 'A') translateX(std::minus<float>());
 	if (k == 'S') translateY(std::minus<float>());
-	if (k == GLFW_KEY_UP) translateX(std::minus<float>());
-	if (k == GLFW_KEY_DOWN) translateX (std::plus<float>());
+	if (k == GLFW_KEY_UP) translateZ(std::minus<float>());
+	if (k == GLFW_KEY_DOWN) translateZ(std::plus<float>());
 }
 
 /*
@@ -98,5 +98,11 @@ void Camera::translateY(std::function<float(float, float)> op) {
 
 void Camera::translateZ(std::function<float(float, float)> op) {
 	eye = eye + glm::vec3(0.0f, 0.0f, op(0, speed));
+}
+
+void Camera::set_view() {
+	eye = glm::vec3(0.0f, 0.0f, -1.5f);
+	center = glm::vec3(0.0f, 0.0f, -1.f);
+	up = glm::vec3(0.0f, 1.0f, 0.0f);
 }
 

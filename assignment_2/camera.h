@@ -19,6 +19,8 @@ public:
 
 	void viewmode(GLint vm);
 
+	void set_view();
+
 private:
 	std::stack<glm::mat4> model;
 	glm::vec3 eye, center, up;

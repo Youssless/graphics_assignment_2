@@ -4,12 +4,12 @@
 
 Skybox::Skybox(const GLuint &program) {
 	std::vector<std::string> file_paths = {
-		"..\\textures\\skybox\\right.jpg",
-		"..\\textures\\skybox\\left.jpg",
-		"..\\textures\\skybox\\top.jpg",
-		"..\\textures\\skybox\\bottom.jpg",
-		"..\\textures\\skybox\\front.jpg",
-		"..\\textures\\skybox\\back.jpg",
+		"..\\textures\\cubemap\\right.jpg",
+		"..\\textures\\cubemap\\left.jpg",
+		"..\\textures\\cubemap\\top.jpg",
+		"..\\textures\\cubemap\\bottom.jpg",
+		"..\\textures\\cubemap\\front.jpg",
+		"..\\textures\\cubemap\\back.jpg",
 	};
 
     std::cout << "texid: " << texid << std::endl;

@@ -21,8 +21,9 @@ void init(GLWrapper* glw) {
 	glBindVertexArray(vao);
 	aspect_ratio = 1024.f / 768.f;
 	move_mode = 0;
+	
 
-	glw->set_title("nanimo");
+	glw->set_title("Pyramids in Space");
 
 	try {
 		program = glw->LoadShader("shader.vert", "shader.frag");
@@ -53,32 +54,20 @@ void display() {
 
 	glEnable(GL_DEPTH_TEST);
 
+	// display models
 	glUseProgram(program);
-
 	scene->display(aspect_ratio);
-
-	
 	glUseProgram(0);
 
-	//glDepthMask(GL_FALSE);
-	//glDisable(GL_DEPTH_TEST);
-	//glDepthMask(GL_FALSE);
+	// display skybox
 	glDepthFunc(GL_LEQUAL);
 	glUseProgram(skybox_program);
 
 	scene->display_skybox(aspect_ratio);
 	
-	
-
 	glDisableVertexAttribArray(0);
 	glUseProgram(0);
 	glDepthFunc(GL_LESS);
-	//glEnable(GL_DEPTH_TEST);
-	
-	//glDepthFunc(GL_LESS);
-
-	
-	
 }
 
 static void reshape(GLFWwindow* window, int w, int h)
@@ -94,9 +83,12 @@ void print_key_bindings() {
 	std::cout << "		KEYS	" << std::endl;
 	std::cout << "-----------------------------------------" << std::endl;
 	std::cout << std::endl;
-	std::cout << "[W, A, S, D]  pan the camera up, left, down, right" << std::endl;
-	std::cout << "[ARROW_UP, ARROW_DOWN]  zoom the camera in, out" << std::endl;
-	std::cout << "[ARROW_LEFT, ARROW_RIGHT, SPACE]  animation speed decrease, increase, stop" << std::endl;
+	std::cout << "[C, L] C = Camera mode, L = Light mode" << std::endl;
+	std::cout << "|NOTE| Depending on the mode you can use the [W, A, S, D] keys to move ethier the camera or the light" << std::endl;
+	std::cout << std::endl;
+	std::cout << "[W, A, S, D]  pan the camera/light up, left, down, right" << std::endl;
+	std::cout << "[ARROW_UP, ARROW_DOWN]  zoom the camera/light in, out" << std::endl;
+	//std::cout << "[ARROW_LEFT, ARROW_RIGHT, SPACE]  animation speed decrease, increase, stop" << std::endl;
 	std::cout << "[1, 2, 3]  view mode 1 (default view), view mode 2 (back view), view mode 3 (top view)" << std::endl;
 	std::cout << std::endl;
 	std::cout << "[M] print menu" << std::endl;
@@ -112,17 +104,21 @@ static void keyCallback(GLFWwindow* window, int key, int s, int action, int mods
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
 
-	if (key == 'L' && action == GLFW_PRESS) move_mode = 8;
-	if (key == 'C' && action == GLFW_PRESS) move_mode = 9;
-
-	if (move_mode == 8) { 
-		scene->light_keys(key, action); 
-		std::cout << "[move_mode = 8] moving light" << std::endl;
+	if (key == 'C' && action == GLFW_PRESS) {
+		move_mode = 0;
+		std::cout << "|move_mode = Camera| moving camera" << std::endl;
+	}
+	if (key == 'L' && action == GLFW_PRESS) {
+		move_mode = 1;
+		std::cout << "|move_mode = Light| moving light" << std::endl;
 	}
 
-	if (move_mode == 9) { 
+	if (move_mode == 0) { 
 		scene->camera_keys(key, action); 
-		std::cout << "[move_mode = 9] moving camera" << std::endl;
+	}
+
+	if (move_mode == 1) {
+		scene->light_keys(key, action);
 	}
 }
 
@@ -148,6 +144,7 @@ int main(int argc, char* argv[]) {
 	init(glw);
 
 	print_key_bindings();
+	std::cout << "|move_mode = Camera| moving camera" << std::endl;
 
 	glw->eventLoop();
 

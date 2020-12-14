@@ -9,8 +9,8 @@ Scene::Scene(const GLuint &program, const GLuint &skybox_program) {
 	light = new Light();
 	light->create_component(program);
 
-	terrain = new terrain_object(3.f, 1.f, 6.f);
-	terrain->createTerrain(600.f, 600.f, 12.f, 12.f);
+	terrain = new terrain_object(8.f, 1.f, 4.f);
+	terrain->createTerrain(300.f, 300.f, 50.f, 50.f);
 	terrain->setColour(glm::vec3(0.0f, 1.0f, 1.0f));
 	terrain->createObject();
 
@@ -76,11 +76,10 @@ void Scene::display(float aspect_ratio) {
 	}
 	model.pop();
 
-	
 	// display pyramids
 	model.push(model.top());
 	{
-		model.top() = glm::translate(model.top(), glm::vec3(-0.5f, -0.25f, 1.5f));
+		model.top() = glm::translate(model.top(), glm::vec3(-0.5f, -0.5f, 1.5f));
 		model.top() = glm::rotate(model.top(), glm::radians(90.f), glm::vec3(0.f, 1.f, 0.f));
 		model.top() = glm::scale(model.top(), glm::vec3(2.f));
 
@@ -92,13 +91,10 @@ void Scene::display(float aspect_ratio) {
 	}
 	model.pop();
 	
-	
-
-	
 	// display sphyinx
 	model.push(model.top());
 	{
-		model.top() = glm::translate(model.top(), glm::vec3(-0.75f, 0.5f, 7.f));
+		model.top() = glm::translate(model.top(), glm::vec3(-0.75f, 0.4f, 7.f));
 		//model.top() = glm::rotate(model.top(), glm::radians(90.f), glm::vec3(0.f, 1.f, 0.f));
 		model.top() = glm::scale(model.top(), glm::vec3(0.75f));
 
@@ -110,10 +106,10 @@ void Scene::display(float aspect_ratio) {
 	}
 	model.pop();
 	texture.unbind_texture();
-
 }
 
 void Scene::display_skybox(float aspect_ratio) {
+	skybox_camera->set_view();
 	skybox_camera->display(aspect_ratio);
 	skybox->display();
 }

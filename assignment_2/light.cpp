@@ -88,11 +88,11 @@ void Light::display(const glm::mat4 &view, glm::mat4 &model, const SharedUniform
 
 void Light::translate(int k) {
 	if (k == 'W') translateY(std::plus<float>());
-	if (k == 'D') translateZ(std::minus<float>());
-	if (k == 'A') translateZ(std::plus<float>());
+	if (k == 'D') translateX(std::plus<float>());
+	if (k == 'A') translateX(std::minus<float>());
 	if (k == 'S') translateY(std::minus<float>());
-	if (k == GLFW_KEY_UP) translateX(std::minus<float>());
-	if (k == GLFW_KEY_DOWN) translateX(std::plus<float>());
+	if (k == GLFW_KEY_UP) translateZ(std::minus<float>());
+	if (k == GLFW_KEY_DOWN) translateZ(std::plus<float>());
 }
 
 void Light::translateX(std::function<float(float, float)> op) {
