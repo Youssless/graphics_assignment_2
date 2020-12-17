@@ -1,34 +1,45 @@
 #include "scene.h"
 
+
+/*
+* scene constructor
+* params:
+*	const GLuint &program : shader program for objects and lighting
+*	const GLuint &skybox_program : shader program for skybox
+*/
 Scene::Scene(const GLuint &program, const GLuint &skybox_program) {
+	// initialise shared uniforms
 	uids = SharedUniforms(program);
 
+	// initialise camera
 	camera = new Camera();
 	camera->create_component(program);
 
+	// initialise light
 	light = new Light();
 	light->create_component(program);
 
+	// initialise terrain
 	terrain = new terrain_object(8.f, 1.f, 4.f);
 	terrain->createTerrain(300.f, 300.f, 50.f, 50.f);
 	terrain->setColour(glm::vec3(0.0f, 1.0f, 1.0f));
 	terrain->createObject();
 
+	// initialise objects
 	pyramids = new TinyObjLoader();
 	pyramids->load_obj("..\\obj\\pyramids_of_giza.obj");
 
 	sphyinx = new TinyObjLoader();
 	sphyinx->load_obj("..\\obj\\sphyinx.obj");
 
+	// initialise skybox 
 	skybox = new Skybox(skybox_program);
 	skybox->create();
 
 	skybox_camera = new Camera();
 	skybox_camera->create_component(skybox_program);
 
-	/*glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);*/
-
+	// load textures
 	try {
 		texture.load("..\\textures\\sand.png", texid, true);
 	}
@@ -49,6 +60,11 @@ Scene::~Scene() {
 	if (skybox) delete(skybox);
 }
 
+/*
+* displays the objects and lighting in the scene
+* params:
+*	float aspec_ratio : current aspect_ratio of the widow
+*/
 void Scene::display(float aspect_ratio) {
 	std::stack<glm::mat4> model;
 	model.push(glm::mat4(1.f));
@@ -108,12 +124,23 @@ void Scene::display(float aspect_ratio) {
 	texture.unbind_texture();
 }
 
+/*
+* displays the skybox in the scene
+* params:
+*	float aspec_ratio : current aspect_ratio of the widow
+*/
 void Scene::display_skybox(float aspect_ratio) {
-	skybox_camera->set_view();
+	skybox_camera->set_view(); // set the lookAt to be constant 
 	skybox_camera->display(aspect_ratio);
 	skybox->display();
 }
 
+/*
+* translates the camera or changes the camera viewmode depending on the key pressed
+* params:
+*	int key : current key pressed
+*	int action : current action macro
+*/
 void Scene::camera_keys(int key, int action) {
 	camera->translate(key);
 
@@ -131,6 +158,12 @@ void Scene::camera_keys(int key, int action) {
 	}
 }
 
+/*
+* translates the light
+* params:
+*	int key : current key pressed
+*	int action : current action macro
+*/
 void Scene::light_keys(int key, int action) {
 	light->translate(key);
 }

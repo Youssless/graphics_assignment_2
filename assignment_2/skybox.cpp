@@ -1,8 +1,12 @@
 #include "skybox.h"
-#include <iostream>
 
-
+/*
+* skybox constructor
+* params:
+*	const GLuint &program : shader program for the skybox
+*/
 Skybox::Skybox(const GLuint &program) {
+    // initialise file paths for the cubemap
 	std::vector<std::string> file_paths = {
 		"..\\textures\\cubemap\\right.jpg",
 		"..\\textures\\cubemap\\left.jpg",
@@ -11,8 +15,8 @@ Skybox::Skybox(const GLuint &program) {
 		"..\\textures\\cubemap\\front.jpg",
 		"..\\textures\\cubemap\\back.jpg",
 	};
-
-    std::cout << "texid: " << texid << std::endl;
+    
+    // load cubemap texures
 	try {
 		texture.load_cube_map(file_paths, texid);
 	}
@@ -22,12 +26,17 @@ Skybox::Skybox(const GLuint &program) {
 
 	int loc = glGetUniformLocation(program, "skybox");
 	if (loc > 0) glUniform1i(loc, 0);
-
-    std::cout << "texid: " << texid << std::endl;
+    
+    // set the vao to 0 to reference the location in the shader
     vao = 0;
 }
 
+/*
+* initialise the vertices and memory for the cube 
+* params:
+*/
 void Skybox::create() {
+    // skybox positions
 	float vertices[] = {         
         -1.0f,  1.0f, -1.0f,
         -1.0f, -1.0f, -1.0f,
@@ -72,7 +81,7 @@ void Skybox::create() {
          1.0f, -1.0f,  1.0f
     };
 
-
+    // generate the memory for the vertices
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
@@ -81,13 +90,17 @@ void Skybox::create() {
 
 Skybox::~Skybox() {}
 
+/*
+* draws the skybox with the textures
+* params:
+*/
 void Skybox::display() {
-    
+    // enable the vertex attrib and set attributes
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glEnableVertexAttribArray(vao);
     glVertexAttribPointer(vao, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
-    
+    // bind the textures of the cubemap and draw the cube
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glActiveTexture(GL_TEXTURE0);
     texture.bind_cube_map(texid);

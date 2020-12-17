@@ -1,7 +1,6 @@
 #pragma once
 #include "common.h"
 #include "texture.h"
-#include "cube_tex.h"
 
 class Skybox {
 public:

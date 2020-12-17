@@ -1,7 +1,13 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "texture.h"
 
-
+/*
+*	load a single 2D texture
+*	params:
+*		const char* file_path : file path of the texture image
+*		GLuint &texid : texture id to generate and bind to
+*		bool gen_mipmaps : enable or disable mipmaps
+*/
 void Texture::load(const char* file_path, GLuint &texid, bool gen_mipmaps) {
 	int width, height, nr_channels;
 	glGenTextures(1, &texid);
@@ -16,7 +22,7 @@ void Texture::load(const char* file_path, GLuint &texid, bool gen_mipmaps) {
 			pixel_format = GL_RGBA;
 
 		// bind before glTexImage2D
-		glBindTexture(GL_TEXTURE_2D, texid);
+		bind_texture(texid);
 
 		// create texture with attributes
 		// 2nd param defines the level
@@ -56,26 +62,26 @@ void Texture::load(const char* file_path, GLuint &texid, bool gen_mipmaps) {
 	}
 }
 
+/*
+*	load multiple texture images for a cube map
+*	params:
+*		std::vector<std::string> file_paths : file paths for the cube map, need 6 images for the cube map
+*		GLuint &texid : texture id to generate and bind to
+*/
 void Texture::load_cube_map(std::vector<std::string> file_paths, GLuint& texid) {
 	int width, height, nr_channels;
 	glGenTextures(1, &texid);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, texid);
+	bind_cube_map(texid);
 
 	for (int i = 0; i < file_paths.size(); i++) {
-		std::cout << file_paths[i].c_str() << std::endl;
 		unsigned char* data = stbi_load(file_paths[i].c_str(), &width, &height, &nr_channels, 0);
 
 		if (data) {
 			// create texture with attributes
-			// 2nd param defines the level
 			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
 
 			// free the data after the texture is created
-			stbi_image_free(data);
-
-			
-
-			//glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+			stbi_image_free(data);	
 		}
 		else {
 			// free the data after the texture is created
@@ -83,27 +89,44 @@ void Texture::load_cube_map(std::vector<std::string> file_paths, GLuint& texid) 
 			throw std::exception("File not found");
 		}
 	}
-
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+	/*glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);*/
 }
 
-
+/*
+*	bind a 2D texture 
+*	params:
+*		GLuint &texid : texture id to bind to 
+*/
 void Texture::bind_texture(const GLuint &texid) {
 	glBindTexture(GL_TEXTURE_2D, texid);
 }
 
+/*
+*	unbind a 2D texture
+*	params:
+*/
 void Texture::unbind_texture() {
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
+/*
+*	bind a cube map texture
+*	params:
+*		GLuint &texid : texture id to bind to
+*/
 void Texture::bind_cube_map(const GLuint& texid) {
 	glBindTexture(GL_TEXTURE_CUBE_MAP, texid);
 }
 
+/*
+*	unbind a cube map texture
+*	params:
+*/
 void Texture::unbind_cube_map() {
 	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 }

@@ -1,6 +1,11 @@
 #include "camera.h"
 #include <iostream>
 
+
+/*
+*	camera constructor 
+*	params:
+*/
 Camera::Camera() {
 	eye = glm::vec3(0.0f, 9.0f, 40.0f);
 	center = glm::vec3(0.0f, 2.0f, 0.0f);

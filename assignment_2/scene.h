@@ -25,6 +25,7 @@ private:
 	SharedUniforms uids;
 	TinyObjLoader *pyramids;
 	TinyObjLoader *sphyinx;
+
 	Texture texture;
 
 	Skybox* skybox;
