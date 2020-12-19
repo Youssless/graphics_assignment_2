@@ -2,7 +2,7 @@
 
 
 Shader::Shader() {
-	program = 0;
+	program = std::numeric_limits<GLuint>::max();
 }
 
 Shader::Shader(std::vector<std::string> file_paths) {

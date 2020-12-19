@@ -50,7 +50,7 @@ void Scene::create() {
 
 	// load textures
 	try {
-		texture.load("..\\textures\\sand.png", texid, true);
+		Texture::load("..\\textures\\sand.png", texid, true);
 	}
 	catch (std::exception& e) {
 		std::cout << e.what() << std::endl;
@@ -80,7 +80,7 @@ void Scene::display_model(float aspect_ratio) {
 	}
 	model.pop();
 
-	texture.bind_texture(texid);
+	Texture::bind_texture(texid);
 	// display terrain
 	model.push(model.top());
 	{
@@ -122,7 +122,7 @@ void Scene::display_model(float aspect_ratio) {
 		sphyinx->drawObject(0);
 	}
 	model.pop();
-	texture.unbind_texture();
+	Texture::unbind_texture();
 }
 
 /*

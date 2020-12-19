@@ -31,7 +31,7 @@ void Skybox::create() {
 
     // load cubemap texures
     try {
-        texture.load_cube_map(file_paths, texid);
+        Texture::load_cube_map(file_paths, texid);
     }
     catch (std::exception& e) {
         std::cout << e.what() << std::endl;
@@ -117,7 +117,7 @@ void Skybox::display(float aspect_ratio) {
     // bind the textures of the cubemap and draw the cube
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glActiveTexture(GL_TEXTURE0);
-    texture.bind_cube_map(texid);
+    Texture::bind_cube_map(texid);
     glDrawArrays(GL_TRIANGLES, 0, 36);
-    texture.unbind_cube_map();
+    Texture::unbind_cube_map();
 }

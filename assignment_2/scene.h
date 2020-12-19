@@ -31,6 +31,5 @@ private:
 	terrain_object *terrain;
 	TinyObjLoader *pyramids, *sphyinx;
 
-	Texture texture;
 	GLuint texid;
 };

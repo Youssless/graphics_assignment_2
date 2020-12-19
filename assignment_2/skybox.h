@@ -13,7 +13,6 @@ public:
 	void set_shader(Shader& shader);
 
 private:
-	Texture texture;
 	GLuint texid;
 	Shader shader;
 	
