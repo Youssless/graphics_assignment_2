@@ -70,18 +70,16 @@ void Shader::send_emitmode(GLuint& emitmode) {
 	glUniform1ui(glGetUniformLocation(program, "emitmode"), emitmode);
 }
 
-//void Shader::send_texture(GLenum tex_type) {
-//	if (tex_type == GL_TEXTURE_2D) {
-//
-//	}
-//	else if (tex_type == GL_TEXTURE_CUBE_MAP) {
-//		uids.skybox = glGetUniformLocation(program, "skybox");
-//		std::cout << uids.skybox << std::endl;
-//		if (uids.skybox > 0) glUniform1i(uids.skybox, 0);
-//	}
-//	uids.tex1 = glGetUniformLocation(program, "tex1");
-//	if (uids.tex1 > 0) glUniform1i(uids.tex1, 0);
-//}
+void Shader::send_texture(GLenum tex_type) {
+	if (tex_type == GL_TEXTURE_2D) {
+		int loc = glGetUniformLocation(program, "tex1");
+		if (loc > 0) glUniform1i(loc, 0);
+	}
+	else if (tex_type == GL_TEXTURE_CUBE_MAP) {
+		int loc = glGetUniformLocation(program, "skybox");
+		if (loc > 0) glUniform1i(loc, 0);
+	}
+}
 
 /* Build shaders from strings containing shader source code */
 GLuint Shader::build_shader(GLenum eShaderType, const std::string& shaderText)

@@ -36,8 +36,7 @@ void Skybox::create() {
     catch (std::exception& e) {
         std::cout << e.what() << std::endl;
     }
-    int loc = glGetUniformLocation(shader.program, "skybox");
-    if (loc > 0) glUniform1i(loc, 0);
+    shader.send_texture(GL_TEXTURE_CUBE_MAP);
 
     // skybox positions
 	float vertices[] = {         
