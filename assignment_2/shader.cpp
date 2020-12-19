@@ -6,8 +6,12 @@ Shader::Shader() {
 }
 
 Shader::Shader(std::vector<std::string> file_paths) {
+	std::cout << file_paths.size() << std::endl;
 	try {
-		program = load_shader(file_paths[0].c_str(), file_paths[1].c_str());
+		if (file_paths.size() > 2)
+			program = load_shader(file_paths[0].c_str(), file_paths[1].c_str(), file_paths[2].c_str());
+		else if (file_paths.size() <= 2)
+			program = load_shader(file_paths[0].c_str(), file_paths[1].c_str());
 	}
 	catch (std::exception& e) {
 		std::cout << e.what() << std::endl;
@@ -68,6 +72,10 @@ void Shader::send_attenuationmode(GLuint& attenuationmode) {
 
 void Shader::send_emitmode(GLuint& emitmode) {
 	glUniform1ui(glGetUniformLocation(program, "emitmode"), emitmode);
+}
+
+void Shader::send_time(float time) {
+	glUniform1f(glGetUniformLocation(program, "time"), time);
 }
 
 //void Shader::send_texture(GLenum tex_type) {
@@ -143,24 +151,35 @@ std::string Shader::read_file(const char* filePath)
 }
 
 /* Load vertex and fragment shader and return the compiled program */
-GLuint Shader::load_shader(const char* vertex_path, const char* fragment_path)
+GLuint Shader::load_shader(const char* vertex_path, const char* fragment_path,
+	const char* geometry_path)
 {
-	GLuint vertShader, fragShader;
+	GLuint vertShader, fragShader, geomShader;
 
 	// Read shaders
 	std::string vertShaderStr = read_file(vertex_path);
 	std::string fragShaderStr = read_file(fragment_path);
 
+	std::string geomShaderStr;
+
+	if (geometry_path != NULL)	std::cout << "YAYYY" << std::endl;
+
+	if (geometry_path != NULL)	geomShaderStr = read_file(geometry_path);
+
 	GLint result = GL_FALSE;
 	int logLength;
 
 	vertShader = build_shader(GL_VERTEX_SHADER, vertShaderStr);
+	if (geometry_path != NULL) geomShader = build_shader(GL_GEOMETRY_SHADER, geomShaderStr);
 	fragShader = build_shader(GL_FRAGMENT_SHADER, fragShaderStr);
+	
 
 	std::cout << "Linking program" << std::endl;
 	GLuint program = glCreateProgram();
 	glAttachShader(program, vertShader);
+	if (geometry_path != NULL)	glAttachShader(program, geomShader);
 	glAttachShader(program, fragShader);
+	
 	glLinkProgram(program);
 
 	glGetProgramiv(program, GL_LINK_STATUS, &result);
@@ -170,7 +189,9 @@ GLuint Shader::load_shader(const char* vertex_path, const char* fragment_path)
 	std::cout << &programError[0] << std::endl;
 
 	glDeleteShader(vertShader);
+	if (geometry_path != NULL)	glDeleteShader(geomShader);
 	glDeleteShader(fragShader);
+	
 
 	return program;
 }

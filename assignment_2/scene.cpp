@@ -9,6 +9,7 @@
 Scene::Scene(std::vector<Shader> &shaders) {
 	main_shader = shaders[0];
 	skybox_shader = shaders[1];
+	ufo_shader = shaders[2];
 }
 
 Scene::~Scene() {
@@ -25,6 +26,8 @@ void Scene::create() {
 	camera = new Camera();
 	camera->set_shader(main_shader);
 
+	ufo_camera = new Camera();
+	ufo_camera->set_shader(ufo_shader);
 
 	// initialise light
 	light = new Light();
@@ -47,6 +50,9 @@ void Scene::create() {
 	skybox = new Skybox();
 	skybox->set_shader(skybox_shader);
 	skybox->create();
+
+	sphere = Sphere(true);
+	sphere.makeSphere(120, 120);
 
 	// load textures
 	try {
@@ -132,6 +138,35 @@ void Scene::display_model(float aspect_ratio) {
 */
 void Scene::display_skybox(float aspect_ratio) {
 	skybox->display(aspect_ratio);
+}
+
+void Scene::display_ufo(float aspect_ratio) {
+	std::stack<glm::mat4> model;
+	model.push(glm::mat4(1.f));
+
+	// display camera
+	ufo_camera->display(aspect_ratio);
+
+	//// display light source
+	/*model.push(model.top());
+	{
+		light->display(camera->view, model.top());
+	}
+	model.pop();*/
+
+	Texture::bind_texture(texid);
+	model.push(model.top());
+	{	
+		ufo_shader.send_time(glfwGetTime());
+
+		model.top() = glm::translate(model.top(), glm::vec3(0.0f, 4.f, 0.0f));
+		ufo_shader.send_model(model.top());
+
+		sphere.drawSphere(0);
+	}
+	model.pop();
+	Texture::unbind_texture();
+	
 }
 
 /*

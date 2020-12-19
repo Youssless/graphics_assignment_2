@@ -28,6 +28,7 @@ void init() {
 	// initialise the shaders
 	shaders.insert(shaders.begin(), Shader({"shader.vert", "shader.frag"}));
 	shaders.insert(shaders.begin() + 1, Shader({"skybox.vert", "skybox.frag"}));
+	shaders.insert(shaders.begin() + 2, Shader({ "explosion.vert", "explosion.frag", "explosion.geom"}));
 
 	// initialise the scene
 	scene = new Scene(shaders);
@@ -43,6 +44,10 @@ void display() {
 	shaders[0].use(1);
 	scene->display_model(aspect_ratio);
 	shaders[0].use(0);
+
+	/*shaders[2].use(1);
+	scene->display_ufo(aspect_ratio);
+	shaders[2].use(0);*/
 
 	// display skybox
 	glDepthFunc(GL_LEQUAL);

@@ -119,6 +119,9 @@
     <ClInclude Include="shader.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
+    <ClInclude Include="common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shader.frag">
@@ -131,6 +134,18 @@
       <Filter>Source Files\shaders</Filter>
     </None>
     <None Include="skybox.vert">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="shader.geom">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="explosion.geom">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="explosion.frag">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="explosion.vert">
       <Filter>Source Files\shaders</Filter>
     </None>
   </ItemGroup>

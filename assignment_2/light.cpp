@@ -5,12 +5,6 @@ Light::Light() {
 	lightdir = glm::vec3(0.f, 10.f, 10.f);
 	lightpos = glm::vec4(1.f);
 
-	lightpos_id = 0;
-	ambient_colour_id = 0;
-	shininess_id = 0;
-	specular_colour_id = 0;
-	normal_trans_id = 0;
-	emitmode_id = 0;
 
 	ambient_colour = glm::vec4(0.f);
 	specular_colour = glm::vec4(1.f);

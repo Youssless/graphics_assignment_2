@@ -17,16 +17,19 @@ public:
 
 	void display_model(float aspect_ratio);
 	void display_skybox(float aspect_ratio);
+	void display_ufo(float aspect_ratio);
 
 	void camera_keys(int key, int action);
 	void light_keys(int key, int action);
 
 private:
-	Shader main_shader, skybox_shader;
+	Shader main_shader, skybox_shader, ufo_shader;
 
-	Camera* camera;
+	Camera* camera, *ufo_camera;
 	Light *light;
 	Skybox* skybox;
+
+	Sphere sphere;
 	
 	terrain_object *terrain;
 	TinyObjLoader *pyramids, *sphyinx;

@@ -171,6 +171,7 @@
     <ClInclude Include="..\common\wrapper_glfw.h" />
     <ClInclude Include="base_component.h" />
     <ClInclude Include="camera.h" />
+    <ClInclude Include="common.h" />
     <ClInclude Include="light.h" />
     <ClInclude Include="scene.h" />
     <ClInclude Include="shader.h" />
@@ -181,8 +182,12 @@
     <ClInclude Include="uniform_ids.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="explosion.frag" />
+    <None Include="explosion.geom" />
+    <None Include="explosion.vert" />
     <None Include="shader.frag" />
     <None Include="shader.vert" />
+    <None Include="shader.geom" />
     <None Include="skybox.frag" />
     <None Include="skybox.vert" />
   </ItemGroup>
