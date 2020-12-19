@@ -5,7 +5,7 @@
 * params:
 *	const GLuint &program : shader program for the skybox
 */
-Skybox::Skybox(const GLuint &program) {
+Skybox::Skybox(Shader* shader) {
     // initialise file paths for the cubemap
 	std::vector<std::string> file_paths = {
 		"..\\textures\\cubemap\\right.jpg",
@@ -23,12 +23,15 @@ Skybox::Skybox(const GLuint &program) {
 	catch (std::exception& e) {
 		std::cout << e.what() << std::endl;
 	}
-
-	int loc = glGetUniformLocation(program, "skybox");
+	int loc = glGetUniformLocation(shader->program, "skybox");
 	if (loc > 0) glUniform1i(loc, 0);
     
     // set the vao to 0 to reference the location in the shader
     vao = 0;
+}
+
+void Skybox::set_shader(Shader* shader) {
+    this->shader = shader;
 }
 
 /*
@@ -94,11 +97,22 @@ Skybox::~Skybox() {}
 * draws the skybox with the textures
 * params:
 */
-void Skybox::display() {
+void Skybox::display(float aspect_ratio) {
     // enable the vertex attrib and set attributes
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glEnableVertexAttribArray(vao);
     glVertexAttribPointer(vao, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+    glm::mat4 projection = glm::perspective(glm::radians(30.0f), aspect_ratio, 0.1f, 100.0f);
+    glm::mat4 view = glm::lookAt(
+        glm::vec3(0.0f, 0.0f, -1.5f),
+        glm::vec3(0.0f, 0.0f, -1.f),
+        glm::vec3(0.0f, 1.0f, 0.0f)
+    );
+
+    shader->send_projection(projection);
+    shader->send_view(view);
+    
 
     // bind the textures of the cubemap and draw the cube
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);

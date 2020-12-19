@@ -6,14 +6,25 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include <glm/gtc/type_ptr.hpp>
 #include <stack>
+#include <vector>
 
 #include "scene.h"
+
+#include "shader.h"
 
 GLuint program, skybox_program, vao;
 GLfloat aspect_ratio;
 
 Scene *scene;
 GLuint move_mode;
+std::vector<Shader*> shaders;
+
+std::vector<std::string> shader_paths = {
+	"shader.vert",
+	"shader.frag",
+	"skybox.vert",
+	"skybox.frag",
+};
 
 void init(GLWrapper* glw) {
 
@@ -21,29 +32,11 @@ void init(GLWrapper* glw) {
 	glBindVertexArray(vao);
 	aspect_ratio = 1024.f / 768.f;
 	move_mode = 0;
-	
 
+	shaders.insert(shaders.begin(), new Shader({"shader.vert", "shader.frag"}));
+	shaders.insert(shaders.begin() + 1, new Shader({"skybox.vert", "skybox.frag"}));
 	glw->set_title("Pyramids in Space");
-
-	try {
-		program = glw->LoadShader("shader.vert", "shader.frag");
-	}
-	catch (std::exception& e) {
-		std::cout << e.what() << std::endl;
-		std::cin.ignore();
-		exit(0);
-	}
-
-	try {
-		skybox_program = glw->LoadShader("skybox.vert", "skybox.frag");
-	}
-	catch (std::exception& e) {
-		std::cout << e.what() << std::endl;
-		std::cin.ignore();
-		exit(0);
-	}
-
-	scene = new Scene(program, skybox_program);
+	scene = new Scene(shaders);
 	
 }
 
@@ -55,18 +48,17 @@ void display() {
 	glEnable(GL_DEPTH_TEST);
 
 	// display models
-	glUseProgram(program);
-	scene->display(aspect_ratio);
-	glUseProgram(0);
+	shaders[0]->use(1);
+	scene->display_model(aspect_ratio);
+	shaders[0]->use(0);
 
 	// display skybox
 	glDepthFunc(GL_LEQUAL);
-	glUseProgram(skybox_program);
-
+	shaders[1]->use(1);
 	scene->display_skybox(aspect_ratio);
 	
 	glDisableVertexAttribArray(0);
-	glUseProgram(0);
+	shaders[1]->use(0);
 	glDepthFunc(GL_LESS);
 }
 
@@ -94,7 +86,6 @@ void print_key_bindings() {
 	std::cout << "[M] print menu" << std::endl;
 	std::cout << std::endl;
 	std::cout << "-----------------------------------------" << std::endl;
-
 }
 
 static void keyCallback(GLFWwindow* window, int key, int s, int action, int mods)

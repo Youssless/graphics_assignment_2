@@ -43,6 +43,9 @@ void Light::create_component(const GLuint &program) {
 	std::cout << emitmode_id << std::endl;
 }
 
+void Light::set_shader(Shader* shader) {
+	this->shader = shader;
+}
 
 /*
 *	update and display the light by passing lighting vars to the frag and vert shaders
@@ -56,34 +59,34 @@ void Light::display(const glm::mat4 &view, glm::mat4 &model, const SharedUniform
 	// transform and scale light_src
 	model = glm::translate(model, lightdir);
 	model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
-	glUniformMatrix4fv(uids.model_id, 1, GL_FALSE, &model[0][0]);
+	shader->send_model(model);
 
 	// vars to send to the shader for lighting calculations
 	glm::mat3 normal_transformation = glm::transpose(glm::inverse(glm::mat3(view * model)));
-	glUniformMatrix3fv(uids.normal_trans_id, 1, GL_FALSE, &normal_transformation[0][0]);
+	shader->send_normal_transformation(normal_transformation);
 
 	lightpos = view * glm::vec4(lightdir, 1.f);
-	glUniform4fv(lightpos_id, 1, &lightpos[0]);
+	shader->send_lightpos(lightpos);
 
 	ambient_colour = glm::vec4(0.2f);
-	glUniform4fv(ambient_colour_id, 1, &ambient_colour[0]);
+	shader->send_ambient_colour(ambient_colour);
 
 	specular_colour = glm::vec4(1.f);
-	glUniform4fv(specular_colour_id, 1, &specular_colour[0]);
+	shader->send_specular_colour(specular_colour);
 
 	shininess = 8.f;
-	glUniform1f(shininess_id, shininess);
+	shader->send_shininess(shininess);
 
 	attenuationmode = 0;
-	glUniform1ui(attenuationmode_id, attenuationmode);
+	shader->send_attenuationmode(attenuationmode);
 
 	// draw the light src, switching between emitmodes only applies the emissve on light_src rather
 	//	than the whole terrain
 	emitmode = 1;
-	glUniform1ui(emitmode_id, emitmode);
+	shader->send_emitmode(emitmode);
 	light_src.drawSphere(0);
 	emitmode = 0;
-	glUniform1ui(emitmode_id, emitmode);
+	shader->send_emitmode(emitmode);
 }
 
 void Light::translate(int k) {

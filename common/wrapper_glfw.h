@@ -38,13 +38,6 @@ public:
 	void setReshapeCallback(void(*f)(GLFWwindow* window, int w, int h));
 	void setKeyCallback(void(*f)(GLFWwindow* window, int key, int scancode, int action, int mods));
 	void setErrorCallback(void(*f)(int error, const char* description));
-
-	/* Shader load and build support functions */
-	GLuint LoadShader(const char *vertex_path, const char *fragment_path);
-	GLuint BuildShader(GLenum eShaderType, const std::string &shaderText);
-	GLuint BuildShaderProgram(std::string vertShaderStr, std::string fragShaderStr);
-	std::string readFile(const char *filePath);
-
 	void set_title(const char *title);
 
 	int eventLoop();

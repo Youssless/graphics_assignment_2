@@ -34,6 +34,10 @@ void Camera::create_component(const GLuint &program) {
 	view_id = glGetUniformLocation(program, "view");
 }
 
+void Camera::set_shader(Shader* shader) {
+	this->shader = shader;
+}
+
 /*
 *	updates the vertex shader with the current camera positions, shader computes the camera position
 *		to display the camera
@@ -42,14 +46,14 @@ void Camera::create_component(const GLuint &program) {
 */
 void Camera::display(const GLfloat &aspect_ratio) {
 	projection = glm::perspective(glm::radians(30.0f), aspect_ratio, 0.1f, 100.0f);
-	glUniformMatrix4fv(projection_id, 1, GL_FALSE, &projection[0][0]);
+	shader->send_projection(projection);
 
 	view = glm::lookAt(
 		eye,
 		center,
 		up
 	);
-	glUniformMatrix4fv(view_id, 1, GL_FALSE, &view[0][0]);
+	shader->send_view(view);
 }
 
 void Camera::viewmode(GLint vm) {
@@ -105,9 +109,19 @@ void Camera::translateZ(std::function<float(float, float)> op) {
 	eye = eye + glm::vec3(0.0f, 0.0f, op(0, speed));
 }
 
-void Camera::set_view() {
+void Camera::lock() {
+	prev_eye = eye;
+	prev_center = center;
+	prev_up = up;
+
 	eye = glm::vec3(0.0f, 0.0f, -1.5f);
 	center = glm::vec3(0.0f, 0.0f, -1.f);
 	up = glm::vec3(0.0f, 1.0f, 0.0f);
+}
+
+void Camera::unlock() {
+	eye = prev_eye;
+	center = prev_center;
+	up = prev_up;
 }
 

@@ -1,23 +1,27 @@
 #include "scene.h"
 
-
 /*
 * scene constructor
 * params:
 *	const GLuint &program : shader program for objects and lighting
 *	const GLuint &skybox_program : shader program for skybox
 */
-Scene::Scene(const GLuint &program, const GLuint &skybox_program) {
+Scene::Scene(std::vector<Shader*> shaders) {
+	this->main_shader = shaders[0];
+	this->skybox_shader = shaders[1];
+
 	// initialise shared uniforms
-	uids = SharedUniforms(program);
+	uids = SharedUniforms(main_shader->program);
 
 	// initialise camera
 	camera = new Camera();
-	camera->create_component(program);
+	camera->set_shader(main_shader);
+	
 
 	// initialise light
 	light = new Light();
-	light->create_component(program);
+	light->create_component(main_shader->program);
+	light->set_shader(main_shader);
 
 	// initialise terrain
 	terrain = new terrain_object(8.f, 1.f, 4.f);
@@ -32,12 +36,10 @@ Scene::Scene(const GLuint &program, const GLuint &skybox_program) {
 	sphyinx = new TinyObjLoader();
 	sphyinx->load_obj("..\\obj\\sphyinx.obj");
 
-	// initialise skybox 
-	skybox = new Skybox(skybox_program);
+	 //initialise skybox 
+	skybox = new Skybox(skybox_shader);
+	skybox->set_shader(skybox_shader);
 	skybox->create();
-
-	skybox_camera = new Camera();
-	skybox_camera->create_component(skybox_program);
 
 	// load textures
 	try {
@@ -47,7 +49,7 @@ Scene::Scene(const GLuint &program, const GLuint &skybox_program) {
 		std::cout << e.what() << std::endl;
 	}
 
-	int loc = glGetUniformLocation(program, "tex1");
+	int loc = glGetUniformLocation(main_shader->program, "tex1");
 	if (loc > 0) glUniform1i(loc, 0);
 }
 
@@ -65,7 +67,7 @@ Scene::~Scene() {
 * params:
 *	float aspec_ratio : current aspect_ratio of the widow
 */
-void Scene::display(float aspect_ratio) {
+void Scene::display_model(float aspect_ratio) {
 	std::stack<glm::mat4> model;
 	model.push(glm::mat4(1.f));
 
@@ -84,10 +86,10 @@ void Scene::display(float aspect_ratio) {
 	model.push(model.top());
 	{
 		model.top() = glm::scale(model.top(), glm::vec3(1.5f, 1.0f, 1.5f));
-		glUniformMatrix4fv(uids.model_id, 1, GL_FALSE, &model.top()[0][0]);
+		main_shader->send_model(model.top());
 
-		glm::mat3 normalmatrix = glm::transpose(glm::inverse(glm::mat3(camera->view * model.top())));
-		glUniformMatrix3fv(uids.normal_trans_id, 1, GL_FALSE, &normalmatrix[0][0]);
+		glm::mat3 normal_transformation = glm::transpose(glm::inverse(glm::mat3(camera->view * model.top())));
+		main_shader->send_normal_transformation(normal_transformation);
 		terrain->drawObject(0);
 	}
 	model.pop();
@@ -99,10 +101,10 @@ void Scene::display(float aspect_ratio) {
 		model.top() = glm::rotate(model.top(), glm::radians(90.f), glm::vec3(0.f, 1.f, 0.f));
 		model.top() = glm::scale(model.top(), glm::vec3(2.f));
 
-		glUniformMatrix4fv(uids.model_id, 1, GL_FALSE, &model.top()[0][0]);
+		main_shader->send_model(model.top());
 
-		glm::mat3 normalmatrix = glm::transpose(glm::inverse(glm::mat3(camera->view * model.top())));
-		glUniformMatrix3fv(uids.normal_trans_id, 1, GL_FALSE, &normalmatrix[0][0]);
+		glm::mat3 normal_transformation = glm::transpose(glm::inverse(glm::mat3(camera->view * model.top())));
+		main_shader->send_normal_transformation(normal_transformation);
 		pyramids->drawObject(0);
 	}
 	model.pop();
@@ -114,10 +116,10 @@ void Scene::display(float aspect_ratio) {
 		//model.top() = glm::rotate(model.top(), glm::radians(90.f), glm::vec3(0.f, 1.f, 0.f));
 		model.top() = glm::scale(model.top(), glm::vec3(0.75f));
 
-		glUniformMatrix4fv(uids.model_id, 1, GL_FALSE, &model.top()[0][0]);
+		main_shader->send_model(model.top());
 
-		glm::mat3 normalmatrix = glm::transpose(glm::inverse(glm::mat3(camera->view * model.top())));
-		glUniformMatrix3fv(uids.normal_trans_id, 1, GL_FALSE, &normalmatrix[0][0]);
+		glm::mat3 normal_transformation = glm::transpose(glm::inverse(glm::mat3(camera->view * model.top())));
+		main_shader->send_normal_transformation(normal_transformation);
 		sphyinx->drawObject(0);
 	}
 	model.pop();
@@ -130,9 +132,7 @@ void Scene::display(float aspect_ratio) {
 *	float aspec_ratio : current aspect_ratio of the widow
 */
 void Scene::display_skybox(float aspect_ratio) {
-	skybox_camera->set_view(); // set the lookAt to be constant 
-	skybox_camera->display(aspect_ratio);
-	skybox->display();
+	skybox->display(aspect_ratio);
 }
 
 /*
