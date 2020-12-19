@@ -10,8 +10,10 @@
 
 class Scene {
 public:
-	Scene(std::vector<Shader*> shaders);
+	Scene(std::vector<Shader> &shaders);
 	~Scene();
+	
+	void create();
 
 	void display_model(float aspect_ratio);
 	void display_skybox(float aspect_ratio);
@@ -20,19 +22,15 @@ public:
 	void light_keys(int key, int action);
 
 private:
-	Camera *camera, *skybox_camera;
-	Light *light;
-	terrain_object *terrain;
-	SharedUniforms uids;
-	TinyObjLoader *pyramids;
-	TinyObjLoader *sphyinx;
+	Shader main_shader, skybox_shader;
 
-	Shader* main_shader, * skybox_shader;
+	Camera* camera;
+	Light *light;
+	Skybox* skybox;
+	
+	terrain_object *terrain;
+	TinyObjLoader *pyramids, *sphyinx;
 
 	Texture texture;
-
-	Skybox* skybox;
-
 	GLuint texid;
-
 };

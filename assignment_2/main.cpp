@@ -12,53 +12,45 @@
 
 #include "shader.h"
 
-GLuint program, skybox_program, vao;
+GLuint vao;
 GLfloat aspect_ratio;
 
 Scene *scene;
 GLuint move_mode;
-std::vector<Shader*> shaders;
+std::vector<Shader> shaders;
 
-std::vector<std::string> shader_paths = {
-	"shader.vert",
-	"shader.frag",
-	"skybox.vert",
-	"skybox.frag",
-};
-
-void init(GLWrapper* glw) {
-
+void init() {
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
 	aspect_ratio = 1024.f / 768.f;
 	move_mode = 0;
 
-	shaders.insert(shaders.begin(), new Shader({"shader.vert", "shader.frag"}));
-	shaders.insert(shaders.begin() + 1, new Shader({"skybox.vert", "skybox.frag"}));
-	glw->set_title("Pyramids in Space");
+	// initialise the shaders
+	shaders.insert(shaders.begin(), Shader({"shader.vert", "shader.frag"}));
+	shaders.insert(shaders.begin() + 1, Shader({"skybox.vert", "skybox.frag"}));
+
+	// initialise the scene
 	scene = new Scene(shaders);
-	
+	scene->create();
 }
 
 void display() {
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 	glEnable(GL_DEPTH_TEST);
 
 	// display models
-	shaders[0]->use(1);
+	shaders[0].use(1);
 	scene->display_model(aspect_ratio);
-	shaders[0]->use(0);
+	shaders[0].use(0);
 
 	// display skybox
 	glDepthFunc(GL_LEQUAL);
-	shaders[1]->use(1);
+	shaders[1].use(1);
 	scene->display_skybox(aspect_ratio);
 	
 	glDisableVertexAttribArray(0);
-	shaders[1]->use(0);
+	shaders[1].use(0);
 	glDepthFunc(GL_LESS);
 }
 
@@ -118,6 +110,7 @@ static void keyCallback(GLFWwindow* window, int key, int s, int action, int mods
 /* Entry point of program */
 int main(int argc, char* argv[]) {
 	GLWrapper* glw = new GLWrapper(1024, 768, "Lab3 start example");;
+	glw->set_title("Pyramids in Space");
 
 	if (!ogl_LoadFunctions()) {
 		fprintf(stderr, "ogl_LoadFunctions() failed. Exiting\n");
@@ -132,7 +125,7 @@ int main(int argc, char* argv[]) {
 	/* Output the OpenGL vendor and version */
 	glw->DisplayVersion();
 
-	init(glw);
+	init();
 
 	print_key_bindings();
 	std::cout << "|move_mode = Camera| moving camera" << std::endl;

@@ -6,21 +6,28 @@
 *	const GLuint &program : shader program for objects and lighting
 *	const GLuint &skybox_program : shader program for skybox
 */
-Scene::Scene(std::vector<Shader*> shaders) {
-	this->main_shader = shaders[0];
-	this->skybox_shader = shaders[1];
+Scene::Scene(std::vector<Shader> &shaders) {
+	main_shader = shaders[0];
+	skybox_shader = shaders[1];
+}
 
-	// initialise shared uniforms
-	uids = SharedUniforms(main_shader->program);
+Scene::~Scene() {
+	if (camera) delete(camera);
+	if (light) delete(light);
+	if (terrain) delete(terrain);
+	if (pyramids) delete(pyramids);
+	if (sphyinx) delete(sphyinx);
+	if (skybox) delete(skybox);
+}
 
+void Scene::create() {
 	// initialise camera
 	camera = new Camera();
 	camera->set_shader(main_shader);
-	
+
 
 	// initialise light
 	light = new Light();
-	light->create_component(main_shader->program);
 	light->set_shader(main_shader);
 
 	// initialise terrain
@@ -36,8 +43,8 @@ Scene::Scene(std::vector<Shader*> shaders) {
 	sphyinx = new TinyObjLoader();
 	sphyinx->load_obj("..\\obj\\sphyinx.obj");
 
-	 //initialise skybox 
-	skybox = new Skybox(skybox_shader);
+	//initialise skybox 
+	skybox = new Skybox();
 	skybox->set_shader(skybox_shader);
 	skybox->create();
 
@@ -49,18 +56,10 @@ Scene::Scene(std::vector<Shader*> shaders) {
 		std::cout << e.what() << std::endl;
 	}
 
-	int loc = glGetUniformLocation(main_shader->program, "tex1");
+	int loc = glGetUniformLocation(main_shader.program, "tex1");
 	if (loc > 0) glUniform1i(loc, 0);
 }
 
-Scene::~Scene() {
-	if (camera) delete(camera);
-	if (light) delete(light);
-	if (terrain) delete(terrain);
-	if (pyramids) delete(pyramids);
-	if (sphyinx) delete(sphyinx);
-	if (skybox) delete(skybox);
-}
 
 /*
 * displays the objects and lighting in the scene
@@ -77,7 +76,7 @@ void Scene::display_model(float aspect_ratio) {
 	//// display light source
 	model.push(model.top());
 	{
-		light->display(camera->view, model.top(), uids);
+		light->display(camera->view, model.top());
 	}
 	model.pop();
 
@@ -86,10 +85,10 @@ void Scene::display_model(float aspect_ratio) {
 	model.push(model.top());
 	{
 		model.top() = glm::scale(model.top(), glm::vec3(1.5f, 1.0f, 1.5f));
-		main_shader->send_model(model.top());
+		main_shader.send_model(model.top());
 
 		glm::mat3 normal_transformation = glm::transpose(glm::inverse(glm::mat3(camera->view * model.top())));
-		main_shader->send_normal_transformation(normal_transformation);
+		main_shader.send_normal_transformation(normal_transformation);
 		terrain->drawObject(0);
 	}
 	model.pop();
@@ -101,10 +100,10 @@ void Scene::display_model(float aspect_ratio) {
 		model.top() = glm::rotate(model.top(), glm::radians(90.f), glm::vec3(0.f, 1.f, 0.f));
 		model.top() = glm::scale(model.top(), glm::vec3(2.f));
 
-		main_shader->send_model(model.top());
+		main_shader.send_model(model.top());
 
 		glm::mat3 normal_transformation = glm::transpose(glm::inverse(glm::mat3(camera->view * model.top())));
-		main_shader->send_normal_transformation(normal_transformation);
+		main_shader.send_normal_transformation(normal_transformation);
 		pyramids->drawObject(0);
 	}
 	model.pop();
@@ -116,10 +115,10 @@ void Scene::display_model(float aspect_ratio) {
 		//model.top() = glm::rotate(model.top(), glm::radians(90.f), glm::vec3(0.f, 1.f, 0.f));
 		model.top() = glm::scale(model.top(), glm::vec3(0.75f));
 
-		main_shader->send_model(model.top());
+		main_shader.send_model(model.top());
 
 		glm::mat3 normal_transformation = glm::transpose(glm::inverse(glm::mat3(camera->view * model.top())));
-		main_shader->send_normal_transformation(normal_transformation);
+		main_shader.send_normal_transformation(normal_transformation);
 		sphyinx->drawObject(0);
 	}
 	model.pop();

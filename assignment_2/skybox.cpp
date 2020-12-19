@@ -5,32 +5,12 @@
 * params:
 *	const GLuint &program : shader program for the skybox
 */
-Skybox::Skybox(Shader* shader) {
-    // initialise file paths for the cubemap
-	std::vector<std::string> file_paths = {
-		"..\\textures\\cubemap\\right.jpg",
-		"..\\textures\\cubemap\\left.jpg",
-		"..\\textures\\cubemap\\top.jpg",
-		"..\\textures\\cubemap\\bottom.jpg",
-		"..\\textures\\cubemap\\front.jpg",
-		"..\\textures\\cubemap\\back.jpg",
-	};
-    
-    // load cubemap texures
-	try {
-		texture.load_cube_map(file_paths, texid);
-	}
-	catch (std::exception& e) {
-		std::cout << e.what() << std::endl;
-	}
-	int loc = glGetUniformLocation(shader->program, "skybox");
-	if (loc > 0) glUniform1i(loc, 0);
-    
+Skybox::Skybox() {
     // set the vao to 0 to reference the location in the shader
     vao = 0;
 }
 
-void Skybox::set_shader(Shader* shader) {
+void Skybox::set_shader(Shader& shader) {
     this->shader = shader;
 }
 
@@ -39,6 +19,26 @@ void Skybox::set_shader(Shader* shader) {
 * params:
 */
 void Skybox::create() {
+    // initialise file paths for the cubemap
+    std::vector<std::string> file_paths = {
+        "..\\textures\\cubemap\\right.jpg",
+        "..\\textures\\cubemap\\left.jpg",
+        "..\\textures\\cubemap\\top.jpg",
+        "..\\textures\\cubemap\\bottom.jpg",
+        "..\\textures\\cubemap\\front.jpg",
+        "..\\textures\\cubemap\\back.jpg",
+    };
+
+    // load cubemap texures
+    try {
+        texture.load_cube_map(file_paths, texid);
+    }
+    catch (std::exception& e) {
+        std::cout << e.what() << std::endl;
+    }
+    int loc = glGetUniformLocation(shader.program, "skybox");
+    if (loc > 0) glUniform1i(loc, 0);
+
     // skybox positions
 	float vertices[] = {         
         -1.0f,  1.0f, -1.0f,
@@ -110,8 +110,8 @@ void Skybox::display(float aspect_ratio) {
         glm::vec3(0.0f, 1.0f, 0.0f)
     );
 
-    shader->send_projection(projection);
-    shader->send_view(view);
+    shader.send_projection(projection);
+    shader.send_view(view);
     
 
     // bind the textures of the cubemap and draw the cube

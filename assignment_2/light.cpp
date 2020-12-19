@@ -21,29 +21,12 @@ Light::Light() {
 	attenuationmode = 0;
 
 	light_src = Sphere(false);
+	light_src.makeSphere(120, 120);
 }
 
 Light::~Light() {}
 
-/*
-*	send ids to the shader
-*	params:
-*		const GLuint &program : current shader program reference
-*/
-void Light::create_component(const GLuint &program) {
-	lightpos_id = glGetUniformLocation(program, "lightpos");
-	ambient_colour_id = glGetUniformLocation(program, "ambient_colour");
-	shininess_id = glGetUniformLocation(program, "shininess");
-	specular_colour_id = glGetUniformLocation(program, "specular_colour");
-	normal_trans_id = glGetUniformLocation(program, "normal_transformation");
-	emitmode_id = glGetUniformLocation(program, "emitmode");
-	attenuationmode_id = glGetUniformLocation(program, "attenuationmode");
-
-	light_src.makeSphere(120, 120);
-	std::cout << emitmode_id << std::endl;
-}
-
-void Light::set_shader(Shader* shader) {
+void Light::set_shader(Shader& shader) {
 	this->shader = shader;
 }
 
@@ -54,39 +37,39 @@ void Light::set_shader(Shader* shader) {
 *		glm::mat4 &model : model for the light_src
 *		const SharedUniforms &uids : shared uniforms between all objects, used for model_id and normal_trans_id
 */
-void Light::display(const glm::mat4 &view, glm::mat4 &model, const SharedUniforms &uids) {
+void Light::display(const glm::mat4 &view, glm::mat4 &model) {
 
 	// transform and scale light_src
 	model = glm::translate(model, lightdir);
 	model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
-	shader->send_model(model);
+	shader.send_model(model);
 
 	// vars to send to the shader for lighting calculations
 	glm::mat3 normal_transformation = glm::transpose(glm::inverse(glm::mat3(view * model)));
-	shader->send_normal_transformation(normal_transformation);
+	shader.send_normal_transformation(normal_transformation);
 
 	lightpos = view * glm::vec4(lightdir, 1.f);
-	shader->send_lightpos(lightpos);
+	shader.send_lightpos(lightpos);
 
 	ambient_colour = glm::vec4(0.2f);
-	shader->send_ambient_colour(ambient_colour);
+	shader.send_ambient_colour(ambient_colour);
 
 	specular_colour = glm::vec4(1.f);
-	shader->send_specular_colour(specular_colour);
+	shader.send_specular_colour(specular_colour);
 
 	shininess = 8.f;
-	shader->send_shininess(shininess);
+	shader.send_shininess(shininess);
 
 	attenuationmode = 0;
-	shader->send_attenuationmode(attenuationmode);
+	shader.send_attenuationmode(attenuationmode);
 
 	// draw the light src, switching between emitmodes only applies the emissve on light_src rather
 	//	than the whole terrain
 	emitmode = 1;
-	shader->send_emitmode(emitmode);
+	shader.send_emitmode(emitmode);
 	light_src.drawSphere(0);
 	emitmode = 0;
-	shader->send_emitmode(emitmode);
+	shader.send_emitmode(emitmode);
 }
 
 void Light::translate(int k) {

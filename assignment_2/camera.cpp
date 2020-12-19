@@ -24,17 +24,7 @@ Camera::~Camera() {
 
 }
 
-/*
-*	send ids to the shader
-*	params:
-*		const GLuint &program : current shader program reference
-*/
-void Camera::create_component(const GLuint &program) {
-	projection_id = glGetUniformLocation(program, "projection");
-	view_id = glGetUniformLocation(program, "view");
-}
-
-void Camera::set_shader(Shader* shader) {
+void Camera::set_shader(Shader& shader) {
 	this->shader = shader;
 }
 
@@ -46,14 +36,14 @@ void Camera::set_shader(Shader* shader) {
 */
 void Camera::display(const GLfloat &aspect_ratio) {
 	projection = glm::perspective(glm::radians(30.0f), aspect_ratio, 0.1f, 100.0f);
-	shader->send_projection(projection);
+	shader.send_projection(projection);
 
 	view = glm::lookAt(
 		eye,
 		center,
 		up
 	);
-	shader->send_view(view);
+	shader.send_view(view);
 }
 
 void Camera::viewmode(GLint vm) {

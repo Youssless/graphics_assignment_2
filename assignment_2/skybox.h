@@ -6,16 +6,16 @@
 class Skybox {
 public:
 	Skybox();
-	Skybox(Shader* shader);
 	~Skybox();
 
 	void create();
 	void display(float aspect_ratio);
-	void set_shader(Shader* shader);
+	void set_shader(Shader& shader);
+
 private:
 	Texture texture;
 	GLuint texid;
-	Shader* shader;
+	Shader shader;
 	
 	
 	GLuint vao, vbo;

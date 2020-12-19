@@ -2,7 +2,6 @@
 
 #include "base_component.h"
 #include "stack"
-#include "shader.h"
 
 class Camera : public BaseComponent {
 public:
@@ -11,10 +10,8 @@ public:
 
 	GLfloat speed;
 	glm::mat4 view, projection;
-	
 
-	void create_component(const GLuint &program);
-	void set_shader(Shader* shader);
+	void set_shader(Shader& shader);
 
 	void display(const GLfloat &aspect_ratio);
 	void translate(int k);
@@ -28,7 +25,7 @@ private:
 	std::stack<glm::mat4> model;
 	glm::vec3 eye, center, up, prev_eye, prev_center, prev_up;;
 	GLuint view_id, projection_id, model_id;
-	Shader* shader;
+	Shader shader;
 
 	void translateX(std::function<float (float, float)> op);
 	void translateY(std::function<float (float, float)> op);
