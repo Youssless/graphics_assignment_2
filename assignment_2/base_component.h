@@ -9,11 +9,11 @@
 
 #include <functional>
 
-#include "uniform_ids.h"
+#include "shader.h"
 
 class BaseComponent {
 public:
-	virtual void create_component(const GLuint &program) = 0;
+	virtual void set_shader(Shader& shader) = 0;
 
 	virtual void translateX(std::function<float (float, float)> op) = 0;
 	virtual void translateY(std::function<float (float, float)> op) = 0;

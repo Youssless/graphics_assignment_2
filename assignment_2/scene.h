@@ -6,30 +6,30 @@
 #include "tiny_loader_texture.h"
 #include "texture.h"
 #include "skybox.h"
+#include "shader.h"
 
 class Scene {
 public:
-	Scene(const GLuint &program, const GLuint &skybox_program);
+	Scene(std::vector<Shader> &shaders);
 	~Scene();
+	
+	void create();
 
-	void display(float aspect_ratio);
+	void display_model(float aspect_ratio);
 	void display_skybox(float aspect_ratio);
 
 	void camera_keys(int key, int action);
 	void light_keys(int key, int action);
 
 private:
-	Camera *camera, *skybox_camera;
+	Shader main_shader, skybox_shader;
+
+	Camera* camera;
 	Light *light;
-	terrain_object *terrain;
-	SharedUniforms uids;
-	TinyObjLoader *pyramids;
-	TinyObjLoader *sphyinx;
-
-	Texture texture;
-
 	Skybox* skybox;
+	
+	terrain_object *terrain;
+	TinyObjLoader *pyramids, *sphyinx;
 
 	GLuint texid;
-
 };

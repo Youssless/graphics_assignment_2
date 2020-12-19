@@ -6,67 +6,51 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include <glm/gtc/type_ptr.hpp>
 #include <stack>
+#include <vector>
 
 #include "scene.h"
 
-GLuint program, skybox_program, vao;
+#include "shader.h"
+
+GLuint vao;
 GLfloat aspect_ratio;
 
 Scene *scene;
 GLuint move_mode;
+std::vector<Shader> shaders;
 
-void init(GLWrapper* glw) {
-
+void init() {
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
 	aspect_ratio = 1024.f / 768.f;
 	move_mode = 0;
-	
 
-	glw->set_title("Pyramids in Space");
+	// initialise the shaders
+	shaders.insert(shaders.begin(), Shader({"shader.vert", "shader.frag"}));
+	shaders.insert(shaders.begin() + 1, Shader({"skybox.vert", "skybox.frag"}));
 
-	try {
-		program = glw->LoadShader("shader.vert", "shader.frag");
-	}
-	catch (std::exception& e) {
-		std::cout << e.what() << std::endl;
-		std::cin.ignore();
-		exit(0);
-	}
-
-	try {
-		skybox_program = glw->LoadShader("skybox.vert", "skybox.frag");
-	}
-	catch (std::exception& e) {
-		std::cout << e.what() << std::endl;
-		std::cin.ignore();
-		exit(0);
-	}
-
-	scene = new Scene(program, skybox_program);
-	
+	// initialise the scene
+	scene = new Scene(shaders);
+	scene->create();
 }
 
 void display() {
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 	glEnable(GL_DEPTH_TEST);
 
 	// display models
-	glUseProgram(program);
-	scene->display(aspect_ratio);
-	glUseProgram(0);
+	shaders[0].use(1);
+	scene->display_model(aspect_ratio);
+	shaders[0].use(0);
 
 	// display skybox
 	glDepthFunc(GL_LEQUAL);
-	glUseProgram(skybox_program);
-
+	shaders[1].use(1);
 	scene->display_skybox(aspect_ratio);
 	
 	glDisableVertexAttribArray(0);
-	glUseProgram(0);
+	shaders[1].use(0);
 	glDepthFunc(GL_LESS);
 }
 
@@ -94,7 +78,6 @@ void print_key_bindings() {
 	std::cout << "[M] print menu" << std::endl;
 	std::cout << std::endl;
 	std::cout << "-----------------------------------------" << std::endl;
-
 }
 
 static void keyCallback(GLFWwindow* window, int key, int s, int action, int mods)
@@ -127,6 +110,7 @@ static void keyCallback(GLFWwindow* window, int key, int s, int action, int mods
 /* Entry point of program */
 int main(int argc, char* argv[]) {
 	GLWrapper* glw = new GLWrapper(1024, 768, "Lab3 start example");;
+	glw->set_title("Pyramids in Space");
 
 	if (!ogl_LoadFunctions()) {
 		fprintf(stderr, "ogl_LoadFunctions() failed. Exiting\n");
@@ -141,7 +125,7 @@ int main(int argc, char* argv[]) {
 	/* Output the OpenGL vendor and version */
 	glw->DisplayVersion();
 
-	init(glw);
+	init();
 
 	print_key_bindings();
 	std::cout << "|move_mode = Camera| moving camera" << std::endl;

@@ -10,21 +10,22 @@ public:
 
 	GLfloat speed;
 	glm::mat4 view, projection;
-	
 
-	void create_component(const GLuint &program);
+	void set_shader(Shader& shader);
 
 	void display(const GLfloat &aspect_ratio);
 	void translate(int k);
 
 	void viewmode(GLint vm);
 
-	void set_view();
+	void lock();
+	void unlock();
 
 private:
 	std::stack<glm::mat4> model;
-	glm::vec3 eye, center, up;
+	glm::vec3 eye, center, up, prev_eye, prev_center, prev_up;;
 	GLuint view_id, projection_id, model_id;
+	Shader shader;
 
 	void translateX(std::function<float (float, float)> op);
 	void translateY(std::function<float (float, float)> op);
