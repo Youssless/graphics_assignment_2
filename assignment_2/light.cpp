@@ -5,12 +5,6 @@ Light::Light() {
 	lightdir = glm::vec3(0.f, 10.f, 10.f);
 	lightpos = glm::vec4(1.f);
 
-	lightpos_id = 0;
-	ambient_colour_id = 0;
-	shininess_id = 0;
-	specular_colour_id = 0;
-	normal_trans_id = 0;
-	emitmode_id = 0;
 
 	ambient_colour = glm::vec4(0.f);
 	specular_colour = glm::vec4(1.f);
@@ -31,14 +25,29 @@ void Light::set_shader(Shader& shader) {
 }
 
 /*
-*	update and display the light by passing lighting vars to the frag and vert shaders
+*	display the light as a sphere
 *	params:
-*		const glm::mat4 &view : pass the current camera view to calculate the light direction
-*		glm::mat4 &model : model for the light_src
-*		const SharedUniforms &uids : shared uniforms between all objects, used for model_id and normal_trans_id
 */
-void Light::display(const glm::mat4 &view, glm::mat4 &model) {
+void Light::display() {
+	// draw the light src, switching between emitmodes only applies the emissve on light_src rather
+	//	than the whole terrain
+	emitmode = 1;
+	shader.send_emitmode(emitmode);
+	light_src.drawSphere(0);
+	emitmode = 0;
+	shader.send_emitmode(emitmode);
+}
 
+
+/*
+*	display the light as a sphere
+*	params: 
+*		const glm::mat4& view : pass the current camera view to calculate the light direction
+*		glm::mat4& model : model for the light_src
+*		const SharedUniforms& uids : shared uniforms between all objects, used for model_idand normal_trans_id
+*/
+
+void Light::send_data(const glm::mat4& view, glm::mat4& model) {
 	// transform and scale light_src
 	model = glm::translate(model, lightdir);
 	model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
@@ -63,15 +72,13 @@ void Light::display(const glm::mat4 &view, glm::mat4 &model) {
 	attenuationmode = 0;
 	shader.send_attenuationmode(attenuationmode);
 
-	// draw the light src, switching between emitmodes only applies the emissve on light_src rather
-	//	than the whole terrain
-	emitmode = 1;
-	shader.send_emitmode(emitmode);
-	light_src.drawSphere(0);
-	emitmode = 0;
-	shader.send_emitmode(emitmode);
 }
 
+/*
+*	translate based on the key input
+*	params:
+*		int k : key pressed
+*/
 void Light::translate(int k) {
 	if (k == 'W') translateY(std::plus<float>());
 	if (k == 'D') translateX(std::plus<float>());
@@ -80,6 +87,10 @@ void Light::translate(int k) {
 	if (k == GLFW_KEY_UP) translateZ(std::minus<float>());
 	if (k == GLFW_KEY_DOWN) translateZ(std::plus<float>());
 }
+
+/*
+ T: pass in std::plus or std::minus to allow for positive and negative directions
+*/
 
 void Light::translateX(std::function<float(float, float)> op) {
 	lightdir = lightdir + glm::vec3(op(0.f, step), 0.f, 0.f);

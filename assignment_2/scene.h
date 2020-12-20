@@ -15,21 +15,30 @@ public:
 	
 	void create();
 
-	void display_model(float aspect_ratio);
-	void display_skybox(float aspect_ratio);
+	void display(float aspect_ratio);
 
 	void camera_keys(int key, int action);
 	void light_keys(int key, int action);
 
 private:
-	Shader main_shader, skybox_shader;
+	Shader main_shader, skybox_shader, explosion_shader;
 
-	Camera* camera;
-	Light *light;
+	Camera* camera, *ufo_camera;
+	Light *light, *debree;
 	Skybox* skybox;
+
+	Sphere sphere;
 	
 	terrain_object *terrain;
-	TinyObjLoader *pyramids, *sphyinx;
+	TinyObjLoader *pyramids, *sphyinx, *spaceship;
 
 	GLuint texid;
+
+	GLfloat s_x, s_y;
+	GLfloat anim_speed;
+
+	void display_model(float aspect_ratio);
+	void display_skybox(float aspect_ratio);
+	void display_spaceship(float aspect_ratio);
+	void display_debree(float aspect_ratio);
 };

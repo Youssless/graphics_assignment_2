@@ -119,18 +119,27 @@
     <ClInclude Include="shader.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
+    <ClInclude Include="common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="shader.frag">
-      <Filter>Source Files\shaders</Filter>
-    </None>
-    <None Include="shader.vert">
-      <Filter>Source Files\shaders</Filter>
-    </None>
     <None Include="skybox.frag">
       <Filter>Source Files\shaders</Filter>
     </None>
     <None Include="skybox.vert">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="explosion.geom">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="main.frag">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="main.geom">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="main.vert">
       <Filter>Source Files\shaders</Filter>
     </None>
   </ItemGroup>

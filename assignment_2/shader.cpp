@@ -5,9 +5,20 @@ Shader::Shader() {
 	program = std::numeric_limits<GLuint>::max();
 }
 
+/*
+* shader constructor
+* params:
+*   std::vector<std::string> file_paths : shader file paths
+*/
 Shader::Shader(std::vector<std::string> file_paths) {
+	std::cout << file_paths.size() << std::endl;
 	try {
-		program = load_shader(file_paths[0].c_str(), file_paths[1].c_str());
+		// load with geometry shader
+		if (file_paths.size() > 2)
+			program = load_shader(file_paths[0].c_str(), file_paths[1].c_str(), file_paths[2].c_str());
+		// load without geometry shader
+		else if (file_paths.size() <= 2)
+			program = load_shader(file_paths[0].c_str(), file_paths[1].c_str());
 	}
 	catch (std::exception& e) {
 		std::cout << e.what() << std::endl;
@@ -20,12 +31,21 @@ Shader::~Shader() {
 
 }
 
+/*
+* use shader program
+* params:
+*   int i : 1 = enable shader program, 2 = disable shader program
+*/
 void Shader::use(int i) {
 	if (i == 1)
 		glUseProgram(program);
 	else if (i == 0)
 		glUseProgram(0);
 }
+
+/*
+* Send values to the specific shader program initialised in the class
+*/
 
 void Shader::send_model(glm::mat4& model) {
 	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_FALSE, &model[0][0]);
@@ -70,6 +90,28 @@ void Shader::send_emitmode(GLuint& emitmode) {
 	glUniform1ui(glGetUniformLocation(program, "emitmode"), emitmode);
 }
 
+
+void Shader::send_time(float time) {
+	glUniform1f(glGetUniformLocation(program, "time"), time);
+}
+
+void Shader::send_magnitude(GLfloat& magnitude) {
+	glUniform1f(glGetUniformLocation(program, "magnitude"), magnitude);
+}
+
+//void Shader::send_texture(GLenum tex_type) {
+//	if (tex_type == GL_TEXTURE_2D) {
+//
+//	}
+//	else if (tex_type == GL_TEXTURE_CUBE_MAP) {
+//		uids.skybox = glGetUniformLocation(program, "skybox");
+//		std::cout << uids.skybox << std::endl;
+//		if (uids.skybox > 0) glUniform1i(uids.skybox, 0);
+//	}
+//	uids.tex1 = glGetUniformLocation(program, "tex1");
+//	if (uids.tex1 > 0) glUniform1i(uids.tex1, 0);
+//}
+
 void Shader::send_texture(GLenum tex_type) {
 	if (tex_type == GL_TEXTURE_2D) {
 		int loc = glGetUniformLocation(program, "tex1");
@@ -80,6 +122,8 @@ void Shader::send_texture(GLenum tex_type) {
 		if (loc > 0) glUniform1i(loc, 0);
 	}
 }
+
+// FROM GL_WRAPPER
 
 /* Build shaders from strings containing shader source code */
 GLuint Shader::build_shader(GLenum eShaderType, const std::string& shaderText)
@@ -141,24 +185,33 @@ std::string Shader::read_file(const char* filePath)
 }
 
 /* Load vertex and fragment shader and return the compiled program */
-GLuint Shader::load_shader(const char* vertex_path, const char* fragment_path)
+GLuint Shader::load_shader(const char* vertex_path, const char* fragment_path,
+	const char* geometry_path)
 {
-	GLuint vertShader, fragShader;
+	GLuint vertShader, fragShader, geomShader;
 
 	// Read shaders
 	std::string vertShaderStr = read_file(vertex_path);
 	std::string fragShaderStr = read_file(fragment_path);
 
+	std::string geomShaderStr;
+
+	if (geometry_path != NULL)	geomShaderStr = read_file(geometry_path);
+
 	GLint result = GL_FALSE;
 	int logLength;
 
 	vertShader = build_shader(GL_VERTEX_SHADER, vertShaderStr);
+	if (geometry_path != NULL) geomShader = build_shader(GL_GEOMETRY_SHADER, geomShaderStr);
 	fragShader = build_shader(GL_FRAGMENT_SHADER, fragShaderStr);
+	
 
 	std::cout << "Linking program" << std::endl;
 	GLuint program = glCreateProgram();
 	glAttachShader(program, vertShader);
+	if (geometry_path != NULL)	glAttachShader(program, geomShader);
 	glAttachShader(program, fragShader);
+	
 	glLinkProgram(program);
 
 	glGetProgramiv(program, GL_LINK_STATUS, &result);
@@ -168,7 +221,9 @@ GLuint Shader::load_shader(const char* vertex_path, const char* fragment_path)
 	std::cout << &programError[0] << std::endl;
 
 	glDeleteShader(vertShader);
+	if (geometry_path != NULL)	glDeleteShader(geomShader);
 	glDeleteShader(fragShader);
+	
 
 	return program;
 }

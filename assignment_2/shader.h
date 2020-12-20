@@ -15,7 +15,7 @@ public:
 
 	GLuint build_shader(GLenum eShaderType, const std::string& shaderText);
 	std::string read_file(const char* filePath);
-	GLuint load_shader(const char* vertex_path, const char* fragment_path);
+	GLuint load_shader(const char* vertex_path, const char* fragment_path, const char* geometry_path = NULL);
 	GLuint build_shader_program(std::string vertShaderStr, std::string fragShaderStr);
 
 	void send_model(glm::mat4& model);
@@ -28,7 +28,9 @@ public:
 	void send_shininess(GLfloat& shininess);
 	void send_attenuationmode(GLuint& attenuationmode);
 	void send_emitmode(GLuint& emitmode);
+	void send_time(float time);
 	void send_texture(GLenum tex_type);
+	void send_magnitude(GLfloat &magnitude);
 
 	GLuint program;
 private:
