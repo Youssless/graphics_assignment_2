@@ -46,6 +46,12 @@ void Scene::create() {
 	sphyinx = new TinyObjLoader();
 	sphyinx->load_obj("..\\obj\\sphyinx.obj");
 
+	spaceship = new TinyObjLoader();
+	spaceship->load_obj("..\\obj\\spaceship.obj");
+	s_x = 20.f;
+	s_y = 20.f;
+	anim_speed = 0.1f;
+
 	//initialise skybox 
 	skybox = new Skybox();
 	skybox->set_shader(skybox_shader);
@@ -186,15 +192,35 @@ void Scene::display_ufo(float aspect_ratio) {
 	Texture::bind_texture(texid);
 	model.push(model.top());
 	{
-		ufo_shader.send_time(glfwGetTime());
+		//glm::mat4 mvp = camera->projection * camera->view * model.top();
 
-		model.top() = glm::translate(model.top(), glm::vec3(0.0f, 4.f, 0.0f));
+		model.top() = glm::translate(model.top(), glm::vec3(s_x, s_y, 0.0f));
+		model.top() = glm::rotate(model.top(), glm::radians(-90.f), glm::vec3(0.f, 1.f, 0.f));
+		model.top() = glm::rotate(model.top(), glm::radians(20.f), glm::vec3(1.f, 0.f, 0.f));
+		model.top() = glm::scale(model.top(), glm::vec3(1.5f, 1.5f, 1.5f));
+
+		
+
+		float time = glfwGetTime();
+		ufo_shader.send_time(time);
+		if (time <= 10.25f) {
+			s_x -= glfwGetTime() / 60.f;
+			s_y -= glfwGetTime() / 60.f;
+		}
+		else if (time > 10.25f){
+			s_x = s_x;
+			s_y = s_y;
+		}
+		
+
 		ufo_shader.send_model(model.top());
+		//std::cout << glfwGetTime() << std::endl;
+		
 
 		glm::mat3 normal_transformation = glm::transpose(glm::inverse(glm::mat3(camera->view * model.top())));
 		main_shader.send_normal_transformation(normal_transformation);
 
-		sphere.drawSphere(0);
+		spaceship->drawObject(0);
 	}
 	model.pop();
 	Texture::unbind_texture();

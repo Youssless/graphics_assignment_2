@@ -142,11 +142,5 @@
     <None Include="explosion.geom">
       <Filter>Source Files\shaders</Filter>
     </None>
-    <None Include="explosion.frag">
-      <Filter>Source Files\shaders</Filter>
-    </None>
-    <None Include="explosion.vert">
-      <Filter>Source Files\shaders</Filter>
-    </None>
   </ItemGroup>
 </Project>

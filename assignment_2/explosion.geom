@@ -27,17 +27,21 @@ vec3 calculate_normal() {
 }
 
 vec4 explode(vec4 position, vec3 normal) {
-	float magnitude = 8.0;
-	vec3 direction = normal * ((sin(time) + 1.0)/2.0)*magnitude;
+	float magnitude = 1.0;
+	vec3 direction = normal * ((pow(log2(time), 2.5)))*magnitude;
 
-	return position + vec4(direction, 1.0);
+	return position + vec4(direction.xy, 0.0, 0.0);
 }
 
 void main() {
-	// calculate normals
+	//calculate normals
 	vec3 normal = calculate_normal();
 	for (int i = 0; i < gl_in.length(); i++) {
-		gl_Position = explode(gl_in[i].gl_Position, normal);
+		
+		if (time <= 10.25)
+			gl_Position = gl_in[i].gl_Position;
+		if (time > 10.25)
+			gl_Position = explode(gl_in[i].gl_Position, normal);
 
 		g_out.texcoords = g_in[i].texcoords;
 		g_out.colour = g_in[i].colour;
@@ -45,6 +49,7 @@ void main() {
 		g_out.V = g_in[i].V;
 		g_out.normal = g_in[i].normal;
 		g_out.lightdir = g_in[i].lightdir;
+			
 		EmitVertex();
 	}
 	EndPrimitive();

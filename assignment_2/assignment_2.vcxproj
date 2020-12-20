@@ -182,9 +182,7 @@
     <ClInclude Include="uniform_ids.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="explosion.frag" />
     <None Include="explosion.geom" />
-    <None Include="explosion.vert" />
     <None Include="shader.frag" />
     <None Include="shader.vert" />
     <None Include="shader.geom" />

@@ -78,6 +78,10 @@ void Shader::send_time(float time) {
 	glUniform1f(glGetUniformLocation(program, "time"), time);
 }
 
+void Shader::send_mvp(glm::mat4 &mvp) {
+	glUniformMatrix4fv(glGetUniformLocation(program, "mvp"), 1, GL_FALSE, &mvp[0][0]);
+}
+
 //void Shader::send_texture(GLenum tex_type) {
 //	if (tex_type == GL_TEXTURE_2D) {
 //

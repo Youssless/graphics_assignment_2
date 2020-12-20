@@ -30,9 +30,12 @@ private:
 	Sphere sphere;
 	
 	terrain_object *terrain;
-	TinyObjLoader *pyramids, *sphyinx;
+	TinyObjLoader *pyramids, *sphyinx, *spaceship;
 
 	GLuint texid;
+
+	GLfloat s_x, s_y;
+	GLfloat anim_speed;
 
 	void display_model(float aspect_ratio);
 	void display_skybox(float aspect_ratio);
