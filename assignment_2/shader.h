@@ -30,7 +30,7 @@ public:
 	void send_emitmode(GLuint& emitmode);
 	void send_time(float time);
 	void send_texture(GLenum tex_type);
-	void send_mvp(glm::mat4& mvp);
+	void send_magnitude(GLfloat &magnitude);
 
 	GLuint program;
 private:

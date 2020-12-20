@@ -9,7 +9,7 @@
 Scene::Scene(std::vector<Shader> &shaders) {
 	main_shader = shaders[0];
 	skybox_shader = shaders[1];
-	ufo_shader = shaders[2];
+	explosion_shader = shaders[2];
 }
 
 Scene::~Scene() {
@@ -27,11 +27,14 @@ void Scene::create() {
 	camera->set_shader(main_shader);
 
 	ufo_camera = new Camera();
-	ufo_camera->set_shader(ufo_shader);
+	ufo_camera->set_shader(explosion_shader);
 
 	// initialise light
 	light = new Light();
 	light->set_shader(main_shader);
+
+	debree = new Light();
+	debree->set_shader(explosion_shader);
 
 	// initialise terrain
 	terrain = new terrain_object(8.f, 1.f, 4.f);
@@ -51,6 +54,8 @@ void Scene::create() {
 	s_x = 20.f;
 	s_y = 20.f;
 	anim_speed = 0.1f;
+
+	
 
 	//initialise skybox 
 	skybox = new Skybox();
@@ -85,13 +90,20 @@ void Scene::display(float aspect_ratio) {
 	}
 	main_shader.use(0);
 
-	camera->set_shader(ufo_shader);
-	light->set_shader(ufo_shader);
-	ufo_shader.use(1);
+	camera->set_shader(explosion_shader);
+	light->set_shader(explosion_shader);
+	explosion_shader.use(1);
 	{
-		display_ufo(aspect_ratio);
+		display_spaceship(aspect_ratio);
 	}
-	ufo_shader.use(0);
+	explosion_shader.use(0);
+	
+	explosion_shader.use(1);
+	{
+		display_fireworks(aspect_ratio);
+	}
+	explosion_shader.use(0);
+
 	camera->set_shader(main_shader);
 	light->set_shader(main_shader);
 
@@ -175,7 +187,7 @@ void Scene::display_skybox(float aspect_ratio) {
 	skybox->display(aspect_ratio);
 }
 
-void Scene::display_ufo(float aspect_ratio) {
+void Scene::display_spaceship(float aspect_ratio) {
 	std::stack<glm::mat4> model;
 	model.push(glm::mat4(1.f));
 
@@ -188,6 +200,9 @@ void Scene::display_ufo(float aspect_ratio) {
 		light->send_data(camera->view, model.top());
 	}
 	model.pop();
+
+	GLfloat magnitude = 1.f;
+	explosion_shader.send_magnitude(magnitude);
 
 	Texture::bind_texture(texid);
 	model.push(model.top());
@@ -202,7 +217,7 @@ void Scene::display_ufo(float aspect_ratio) {
 		
 
 		float time = glfwGetTime();
-		ufo_shader.send_time(time);
+		explosion_shader.send_time(time);
 		if (time <= 10.25f) {
 			s_x -= glfwGetTime() / 60.f;
 			s_y -= glfwGetTime() / 60.f;
@@ -213,7 +228,7 @@ void Scene::display_ufo(float aspect_ratio) {
 		}
 		
 
-		ufo_shader.send_model(model.top());
+		explosion_shader.send_model(model.top());
 		//std::cout << glfwGetTime() << std::endl;
 		
 
@@ -224,6 +239,24 @@ void Scene::display_ufo(float aspect_ratio) {
 	}
 	model.pop();
 	Texture::unbind_texture();
+}
+
+void Scene::display_fireworks(float aspect_ratio) {
+	std::stack<glm::mat4> model;
+	model.push(glm::mat4(1.f));
+	// display camera
+	camera->send_data(aspect_ratio);
+	GLfloat magnitude = 8.f;
+	explosion_shader.send_magnitude(magnitude);
+
+	//// display light source
+	model.push(model.top());
+	{
+		model.top() = glm::translate(model.top(), glm::vec3(0.0f, -11.0f, -5.0f));
+		debree->send_data(camera->view, model.top());
+		debree->display();
+	}
+	model.pop();
 }
 
 /*

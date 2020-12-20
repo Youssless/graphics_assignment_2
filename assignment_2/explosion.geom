@@ -5,6 +5,8 @@ layout(triangle_strip, max_vertices = 3) out;
 
 uniform float time;
 
+uniform float magnitude;
+
 in VERT_OUT {
 	vec2 texcoords;
 	vec4 colour;
@@ -27,11 +29,11 @@ vec3 calculate_normal() {
 }
 
 vec4 explode(vec4 position, vec3 normal) {
-	float magnitude = 1.0;
 	vec3 direction = normal * ((pow(log2(time), 2.5)))*magnitude;
-
 	return position + vec4(direction.xy, 0.0, 0.0);
 }
+
+
 
 void main() {
 	//calculate normals

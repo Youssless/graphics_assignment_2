@@ -21,10 +21,10 @@ public:
 	void light_keys(int key, int action);
 
 private:
-	Shader main_shader, skybox_shader, ufo_shader;
+	Shader main_shader, skybox_shader, explosion_shader;
 
 	Camera* camera, *ufo_camera;
-	Light *light;
+	Light *light, *debree;
 	Skybox* skybox;
 
 	Sphere sphere;
@@ -39,5 +39,6 @@ private:
 
 	void display_model(float aspect_ratio);
 	void display_skybox(float aspect_ratio);
-	void display_ufo(float aspect_ratio);
+	void display_spaceship(float aspect_ratio);
+	void display_fireworks(float aspect_ratio);
 };
