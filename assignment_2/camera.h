@@ -13,7 +13,7 @@ public:
 
 	void set_shader(Shader& shader);
 
-	void display(const GLfloat &aspect_ratio);
+	void send_data(const GLfloat &aspect_ratio);
 	void translate(int k);
 
 	void viewmode(GLint vm);

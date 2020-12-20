@@ -31,8 +31,17 @@ void Light::set_shader(Shader& shader) {
 *		glm::mat4 &model : model for the light_src
 *		const SharedUniforms &uids : shared uniforms between all objects, used for model_id and normal_trans_id
 */
-void Light::display(const glm::mat4 &view, glm::mat4 &model) {
+void Light::display() {
+	// draw the light src, switching between emitmodes only applies the emissve on light_src rather
+	//	than the whole terrain
+	emitmode = 1;
+	shader.send_emitmode(emitmode);
+	light_src.drawSphere(0);
+	emitmode = 0;
+	shader.send_emitmode(emitmode);
+}
 
+void Light::send_data(const glm::mat4& view, glm::mat4& model) {
 	// transform and scale light_src
 	model = glm::translate(model, lightdir);
 	model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
@@ -57,13 +66,6 @@ void Light::display(const glm::mat4 &view, glm::mat4 &model) {
 	attenuationmode = 0;
 	shader.send_attenuationmode(attenuationmode);
 
-	// draw the light src, switching between emitmodes only applies the emissve on light_src rather
-	//	than the whole terrain
-	emitmode = 1;
-	shader.send_emitmode(emitmode);
-	light_src.drawSphere(0);
-	emitmode = 0;
-	shader.send_emitmode(emitmode);
 }
 
 void Light::translate(int k) {

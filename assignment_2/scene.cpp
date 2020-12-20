@@ -72,17 +72,46 @@ void Scene::create() {
 * params:
 *	float aspec_ratio : current aspect_ratio of the widow
 */
+void Scene::display(float aspect_ratio) {
+	main_shader.use(1);
+	{
+		display_model(aspect_ratio);
+	}
+	main_shader.use(0);
+
+	camera->set_shader(ufo_shader);
+	light->set_shader(ufo_shader);
+	ufo_shader.use(1);
+	{
+		display_ufo(aspect_ratio);
+	}
+	ufo_shader.use(0);
+	camera->set_shader(main_shader);
+	light->set_shader(main_shader);
+
+	glDepthFunc(GL_LEQUAL);
+	skybox_shader.use(1);
+	{
+		display_skybox(aspect_ratio);
+		glDisableVertexAttribArray(0);
+	}
+	skybox_shader.use(0);
+	glDepthFunc(GL_LESS);
+}
+
 void Scene::display_model(float aspect_ratio) {
 	std::stack<glm::mat4> model;
 	model.push(glm::mat4(1.f));
 
 	// display camera
-	camera->display(aspect_ratio);
+	camera->send_data(aspect_ratio);
 
 	//// display light source
+
 	model.push(model.top());
 	{
-		light->display(camera->view, model.top());
+		light->send_data(camera->view, model.top());
+		light->display();
 	}
 	model.pop();
 
@@ -113,7 +142,7 @@ void Scene::display_model(float aspect_ratio) {
 		pyramids->drawObject(0);
 	}
 	model.pop();
-	
+
 	// display sphyinx
 	model.push(model.top());
 	{
@@ -145,28 +174,30 @@ void Scene::display_ufo(float aspect_ratio) {
 	model.push(glm::mat4(1.f));
 
 	// display camera
-	ufo_camera->display(aspect_ratio);
+	camera->send_data(aspect_ratio);
 
 	//// display light source
-	/*model.push(model.top());
+	model.push(model.top());
 	{
-		light->display(camera->view, model.top());
+		light->send_data(camera->view, model.top());
 	}
-	model.pop();*/
+	model.pop();
 
 	Texture::bind_texture(texid);
 	model.push(model.top());
-	{	
+	{
 		ufo_shader.send_time(glfwGetTime());
 
 		model.top() = glm::translate(model.top(), glm::vec3(0.0f, 4.f, 0.0f));
 		ufo_shader.send_model(model.top());
 
+		glm::mat3 normal_transformation = glm::transpose(glm::inverse(glm::mat3(camera->view * model.top())));
+		main_shader.send_normal_transformation(normal_transformation);
+
 		sphere.drawSphere(0);
 	}
 	model.pop();
 	Texture::unbind_texture();
-	
 }
 
 /*

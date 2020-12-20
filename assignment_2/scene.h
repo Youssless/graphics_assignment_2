@@ -15,9 +15,7 @@ public:
 	
 	void create();
 
-	void display_model(float aspect_ratio);
-	void display_skybox(float aspect_ratio);
-	void display_ufo(float aspect_ratio);
+	void display(float aspect_ratio);
 
 	void camera_keys(int key, int action);
 	void light_keys(int key, int action);
@@ -35,4 +33,8 @@ private:
 	TinyObjLoader *pyramids, *sphyinx;
 
 	GLuint texid;
+
+	void display_model(float aspect_ratio);
+	void display_skybox(float aspect_ratio);
+	void display_ufo(float aspect_ratio);
 };

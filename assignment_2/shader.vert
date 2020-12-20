@@ -11,23 +11,25 @@ uniform mat4 model, view, projection;
 
 uniform mat3 normal_transformation;
 uniform vec4 lightpos;
-
-out vec4 fcolour;
 uniform vec4 ambient_colour;
 
-out vec3 fV, fnormal, f_lightdir;
 
 uniform uint attenuationmode;
-out float fattenuation;
 
-out vec2 ftexcoords;
+out VERT_OUT {
+	vec2 texcoords;
+	vec4 colour;
+	float attenuation;
+	vec3 V, normal, lightdir;
+
+} g_out;
 
 void main() {
 
 	vec4 position_h = vec4(position, 1.0);
 
 	//fcolour = vec4(colour, 1.0)*ambient_colour;
-	fcolour = ambient_colour;
+	g_out.colour = ambient_colour;
 
 	/*TRANSFORMING AND NORMALISING THE NORMAL AND LIGHT DIRECTION*/
 	// define the modelview transformation
@@ -42,16 +44,16 @@ void main() {
 
 	// normalize the normal and the light direction
 	// turn the vectors to unit vectors, so that we dont scale our lighting to the actual size of the normal vector
-	fnormal = normalize(N);
-	f_lightdir = normalize(L);
-	fV = normalize(-P.xyz);
+	g_out.normal = normalize(N);
+	g_out.lightdir = normalize(L);
+	g_out.V = normalize(-P.xyz);
 	
 	/*ATTENUATION*/
 	float attenuation;
 	float distance_to_light = length(L);
 	if (attenuationmode == 1) {
 		attenuation = 1.0;
-		fattenuation = attenuation;
+		g_out.attenuation = attenuation;
 	}
 	else if (attenuationmode == 0){ 
 		float k1 = 0.5;
@@ -59,10 +61,10 @@ void main() {
 		float k3 = 0.5;
 
 		attenuation = 1.0/(k1 + k2*distance_to_light + k3*pow(distance_to_light, 2));
-		fattenuation = 40*attenuation;
+		g_out.attenuation = 40*attenuation;
 	}
 
-	ftexcoords = vec2(texcoords.x, texcoords.y);
+	g_out.texcoords = vec2(texcoords.x, texcoords.y);
 
 	// Define the vertex position
 	gl_Position = projection * view * model * position_h;

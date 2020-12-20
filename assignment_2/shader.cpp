@@ -162,8 +162,6 @@ GLuint Shader::load_shader(const char* vertex_path, const char* fragment_path,
 
 	std::string geomShaderStr;
 
-	if (geometry_path != NULL)	std::cout << "YAYYY" << std::endl;
-
 	if (geometry_path != NULL)	geomShaderStr = read_file(geometry_path);
 
 	GLint result = GL_FALSE;

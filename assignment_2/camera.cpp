@@ -34,7 +34,7 @@ void Camera::set_shader(Shader& shader) {
 *	params:
 *		aspect ratio to update the perspective when the widow size changes
 */
-void Camera::display(const GLfloat &aspect_ratio) {
+void Camera::send_data(const GLfloat &aspect_ratio) {
 	projection = glm::perspective(glm::radians(30.0f), aspect_ratio, 0.1f, 100.0f);
 	shader.send_projection(projection);
 

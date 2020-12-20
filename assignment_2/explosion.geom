@@ -7,9 +7,17 @@ uniform float time;
 
 in VERT_OUT {
 	vec2 texcoords;
+	vec4 colour;
+	float attenuation;
+	vec3 V, normal, lightdir;
 } g_in[];
 
-out vec2 ftexcoords;
+out GEOM_OUT {
+	vec2 texcoords;
+	vec4 colour;
+	float attenuation;
+	vec3 V, normal, lightdir;
+} g_out;
 
 vec3 calculate_normal() {
 	vec3 a = vec3(gl_in[0].gl_Position) - vec3(gl_in[1].gl_Position);
@@ -28,17 +36,17 @@ vec4 explode(vec4 position, vec3 normal) {
 void main() {
 	// calculate normals
 	vec3 normal = calculate_normal();
-	gl_Position = explode(gl_in[0].gl_Position, normal);
-	ftexcoords = g_in[0].texcoords;
-	EmitVertex();
-	gl_Position = explode(gl_in[1].gl_Position, normal);
-	ftexcoords = g_in[1].texcoords;
-	EmitVertex();
-	gl_Position = explode(gl_in[2].gl_Position, normal);
-	ftexcoords = g_in[2].texcoords;
-	EmitVertex();
-	
+	for (int i = 0; i < gl_in.length(); i++) {
+		gl_Position = explode(gl_in[i].gl_Position, normal);
 
+		g_out.texcoords = g_in[i].texcoords;
+		g_out.colour = g_in[i].colour;
+		g_out.attenuation = g_in[i].attenuation;
+		g_out.V = g_in[i].V;
+		g_out.normal = g_in[i].normal;
+		g_out.lightdir = g_in[i].lightdir;
+		EmitVertex();
+	}
 	EndPrimitive();
 }
 

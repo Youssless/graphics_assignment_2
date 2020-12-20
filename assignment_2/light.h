@@ -11,7 +11,8 @@ public:
 		specular_colour_id, normal_trans_id, emitmode_id, attenuationmode_id;
 
 	void set_shader(Shader& shader);
-	void display(const glm::mat4& view, glm::mat4 &model);
+	void display();
+	void send_data(const glm::mat4& view, glm::mat4& model);
 
 	void translate(int k);
 
