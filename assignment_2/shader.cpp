@@ -90,6 +90,7 @@ void Shader::send_emitmode(GLuint& emitmode) {
 	glUniform1ui(glGetUniformLocation(program, "emitmode"), emitmode);
 }
 
+
 void Shader::send_time(float time) {
 	glUniform1f(glGetUniformLocation(program, "time"), time);
 }
@@ -110,6 +111,17 @@ void Shader::send_magnitude(GLfloat& magnitude) {
 //	uids.tex1 = glGetUniformLocation(program, "tex1");
 //	if (uids.tex1 > 0) glUniform1i(uids.tex1, 0);
 //}
+
+void Shader::send_texture(GLenum tex_type) {
+	if (tex_type == GL_TEXTURE_2D) {
+		int loc = glGetUniformLocation(program, "tex1");
+		if (loc > 0) glUniform1i(loc, 0);
+	}
+	else if (tex_type == GL_TEXTURE_CUBE_MAP) {
+		int loc = glGetUniformLocation(program, "skybox");
+		if (loc > 0) glUniform1i(loc, 0);
+	}
+}
 
 // FROM GL_WRAPPER
 

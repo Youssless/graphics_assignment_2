@@ -78,9 +78,7 @@ void Scene::create() {
 	catch (std::exception& e) {
 		std::cout << e.what() << std::endl;
 	}
-
-	int loc = glGetUniformLocation(main_shader.program, "tex1");
-	if (loc > 0) glUniform1i(loc, 0);
+	main_shader.send_texture(GL_TEXTURE_2D);
 }
 
 
