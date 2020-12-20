@@ -40,5 +40,5 @@ private:
 	void display_model(float aspect_ratio);
 	void display_skybox(float aspect_ratio);
 	void display_spaceship(float aspect_ratio);
-	void display_fireworks(float aspect_ratio);
+	void display_debree(float aspect_ratio);
 };

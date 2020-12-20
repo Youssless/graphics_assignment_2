@@ -25,11 +25,8 @@ void Light::set_shader(Shader& shader) {
 }
 
 /*
-*	update and display the light by passing lighting vars to the frag and vert shaders
+*	display the light as a sphere
 *	params:
-*		const glm::mat4 &view : pass the current camera view to calculate the light direction
-*		glm::mat4 &model : model for the light_src
-*		const SharedUniforms &uids : shared uniforms between all objects, used for model_id and normal_trans_id
 */
 void Light::display() {
 	// draw the light src, switching between emitmodes only applies the emissve on light_src rather
@@ -40,6 +37,15 @@ void Light::display() {
 	emitmode = 0;
 	shader.send_emitmode(emitmode);
 }
+
+
+/*
+*	display the light as a sphere
+*	params: 
+*		const glm::mat4& view : pass the current camera view to calculate the light direction
+*		glm::mat4& model : model for the light_src
+*		const SharedUniforms& uids : shared uniforms between all objects, used for model_idand normal_trans_id
+*/
 
 void Light::send_data(const glm::mat4& view, glm::mat4& model) {
 	// transform and scale light_src
@@ -68,6 +74,11 @@ void Light::send_data(const glm::mat4& view, glm::mat4& model) {
 
 }
 
+/*
+*	translate based on the key input
+*	params:
+*		int k : key pressed
+*/
 void Light::translate(int k) {
 	if (k == 'W') translateY(std::plus<float>());
 	if (k == 'D') translateX(std::plus<float>());
@@ -76,6 +87,10 @@ void Light::translate(int k) {
 	if (k == GLFW_KEY_UP) translateZ(std::minus<float>());
 	if (k == GLFW_KEY_DOWN) translateZ(std::plus<float>());
 }
+
+/*
+ T: pass in std::plus or std::minus to allow for positive and negative directions
+*/
 
 void Light::translateX(std::function<float(float, float)> op) {
 	lightdir = lightdir + glm::vec3(op(0.f, step), 0.f, 0.f);

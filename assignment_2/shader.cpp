@@ -5,11 +5,18 @@ Shader::Shader() {
 	program = std::numeric_limits<GLuint>::max();
 }
 
+/*
+* shader constructor
+* params:
+*   std::vector<std::string> file_paths : shader file paths
+*/
 Shader::Shader(std::vector<std::string> file_paths) {
 	std::cout << file_paths.size() << std::endl;
 	try {
+		// load with geometry shader
 		if (file_paths.size() > 2)
 			program = load_shader(file_paths[0].c_str(), file_paths[1].c_str(), file_paths[2].c_str());
+		// load without geometry shader
 		else if (file_paths.size() <= 2)
 			program = load_shader(file_paths[0].c_str(), file_paths[1].c_str());
 	}
@@ -24,12 +31,21 @@ Shader::~Shader() {
 
 }
 
+/*
+* use shader program
+* params:
+*   int i : 1 = enable shader program, 2 = disable shader program
+*/
 void Shader::use(int i) {
 	if (i == 1)
 		glUseProgram(program);
 	else if (i == 0)
 		glUseProgram(0);
 }
+
+/*
+* Send values to the specific shader program initialised in the class
+*/
 
 void Shader::send_model(glm::mat4& model) {
 	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_FALSE, &model[0][0]);
@@ -94,6 +110,8 @@ void Shader::send_magnitude(GLfloat& magnitude) {
 //	uids.tex1 = glGetUniformLocation(program, "tex1");
 //	if (uids.tex1 > 0) glUniform1i(uids.tex1, 0);
 //}
+
+// FROM GL_WRAPPER
 
 /* Build shaders from strings containing shader source code */
 GLuint Shader::build_shader(GLenum eShaderType, const std::string& shaderText)

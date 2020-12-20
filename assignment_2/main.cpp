@@ -9,7 +9,6 @@
 #include <vector>
 
 #include "scene.h"
-
 #include "shader.h"
 
 GLuint vao;
@@ -26,9 +25,9 @@ void init() {
 	move_mode = 0;
 
 	// initialise the shaders
-	shaders.insert(shaders.begin(), Shader({"shader.vert", "shader.frag", "shader.geom"}));
+	shaders.insert(shaders.begin(), Shader({"main.vert", "main.frag", "main.geom"}));
 	shaders.insert(shaders.begin() + 1, Shader({"skybox.vert", "skybox.frag"}));
-	shaders.insert(shaders.begin() + 2, Shader({"shader.vert", "shader.frag", "explosion.geom"}));
+	shaders.insert(shaders.begin() + 2, Shader({"main.vert", "main.frag", "explosion.geom"}));
 
 	// initialise the scene
 	scene = new Scene(shaders);
@@ -40,6 +39,7 @@ void display() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
 
+	// display the scene
 	scene->display(aspect_ratio);
 }
 
@@ -80,6 +80,7 @@ static void keyCallback(GLFWwindow* window, int key, int s, int action, int mods
 		move_mode = 0;
 		std::cout << "|move_mode = Camera| moving camera" << std::endl;
 	}
+
 	if (key == 'L' && action == GLFW_PRESS) {
 		move_mode = 1;
 		std::cout << "|move_mode = Light| moving light" << std::endl;

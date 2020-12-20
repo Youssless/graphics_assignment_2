@@ -19,8 +19,14 @@ Scene::~Scene() {
 	if (pyramids) delete(pyramids);
 	if (sphyinx) delete(sphyinx);
 	if (skybox) delete(skybox);
+	if (debree) delete(debree);
 }
 
+
+/*
+* initialise scene
+* params:
+*/
 void Scene::create() {
 	// initialise camera
 	camera = new Camera();
@@ -79,7 +85,7 @@ void Scene::create() {
 
 
 /*
-* displays the objects and lighting in the scene
+* displays the whole scene
 * params:
 *	float aspec_ratio : current aspect_ratio of the widow
 */
@@ -100,7 +106,7 @@ void Scene::display(float aspect_ratio) {
 	
 	explosion_shader.use(1);
 	{
-		display_fireworks(aspect_ratio);
+		display_debree(aspect_ratio);
 	}
 	explosion_shader.use(0);
 
@@ -117,6 +123,11 @@ void Scene::display(float aspect_ratio) {
 	glDepthFunc(GL_LESS);
 }
 
+/*
+* displays the whole scene
+* params:
+*	float aspec_ratio : current aspect_ratio of the widow
+*/
 void Scene::display_model(float aspect_ratio) {
 	std::stack<glm::mat4> model;
 	model.push(glm::mat4(1.f));
@@ -187,6 +198,11 @@ void Scene::display_skybox(float aspect_ratio) {
 	skybox->display(aspect_ratio);
 }
 
+/*
+* displays the spaceship 
+* params:
+*	float aspec_ratio : current aspect_ratio of the widow
+*/
 void Scene::display_spaceship(float aspect_ratio) {
 	std::stack<glm::mat4> model;
 	model.push(glm::mat4(1.f));
@@ -241,7 +257,12 @@ void Scene::display_spaceship(float aspect_ratio) {
 	Texture::unbind_texture();
 }
 
-void Scene::display_fireworks(float aspect_ratio) {
+/*
+* displays the debree
+* params:
+*	float aspec_ratio : current aspect_ratio of the widow
+*/
+void Scene::display_debree(float aspect_ratio) {
 	std::stack<glm::mat4> model;
 	model.push(glm::mat4(1.f));
 	// display camera

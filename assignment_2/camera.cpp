@@ -24,6 +24,11 @@ Camera::~Camera() {
 
 }
 
+/*
+* sets the current shader
+* params:
+*	const Shader &shader : shader for the skybox
+*/
 void Camera::set_shader(Shader& shader) {
 	this->shader = shader;
 }

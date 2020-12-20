@@ -183,9 +183,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="explosion.geom" />
-    <None Include="shader.frag" />
-    <None Include="shader.vert" />
-    <None Include="shader.geom" />
+    <None Include="main.frag" />
+    <None Include="main.vert" />
+    <None Include="main.geom" />
     <None Include="skybox.frag" />
     <None Include="skybox.vert" />
   </ItemGroup>
