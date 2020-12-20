@@ -32,7 +32,7 @@ private:
 	terrain_object *terrain;
 	TinyObjLoader *pyramids, *sphyinx, *spaceship;
 
-	GLuint texid;
+	GLuint spaceship_tex_id, terrain_tex_id;
 
 	GLfloat s_x, s_y;
 	GLfloat anim_speed;

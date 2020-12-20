@@ -44,9 +44,9 @@ void main() {
 	//calculate normals
 	vec3 normal = calculate_normal();
 	for (int i = 0; i < gl_in.length(); i++) {
-		if (time <= 10.25)
+		if (time <= 10.55)
 			gl_Position = gl_in[i].gl_Position;
-		if (time > 10.25)
+		if (time > 10.55)
 			// explode once time passes a certain value
 			gl_Position = explode(gl_in[i].gl_Position, normal);
 

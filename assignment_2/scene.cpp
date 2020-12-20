@@ -46,6 +46,7 @@ void Scene::create() {
 	terrain = new terrain_object(8.f, 1.f, 4.f);
 	terrain->createTerrain(300.f, 300.f, 50.f, 50.f);
 	terrain->setColour(glm::vec3(0.0f, 1.0f, 1.0f));
+	terrain->defineSeaLevel(0.f);
 	terrain->createObject();
 
 	// initialise objects
@@ -73,7 +74,16 @@ void Scene::create() {
 
 	// load textures
 	try {
-		Texture::load("..\\textures\\sand.png", texid, true);
+		Texture::load("..\\textures\\sand.png", terrain_tex_id, true);
+	}
+	catch (std::exception& e) {
+		std::cout << e.what() << std::endl;
+	}
+	//main_shader.send_texture(GL_TEXTURE_2D);
+
+	// load textures
+	try {
+		Texture::load("..\\textures\\spaceship.jpg", spaceship_tex_id, true);
 	}
 	catch (std::exception& e) {
 		std::cout << e.what() << std::endl;
@@ -142,7 +152,7 @@ void Scene::display_model(float aspect_ratio) {
 	}
 	model.pop();
 
-	Texture::bind_texture(texid);
+	Texture::bind_texture(terrain_tex_id);
 	// display terrain
 	model.push(model.top());
 	{
@@ -152,21 +162,6 @@ void Scene::display_model(float aspect_ratio) {
 		glm::mat3 normal_transformation = glm::transpose(glm::inverse(glm::mat3(camera->view * model.top())));
 		main_shader.send_normal_transformation(normal_transformation);
 		terrain->drawObject(0);
-	}
-	model.pop();
-
-	// display pyramids
-	model.push(model.top());
-	{
-		model.top() = glm::translate(model.top(), glm::vec3(-0.5f, -0.5f, 1.5f));
-		model.top() = glm::rotate(model.top(), glm::radians(90.f), glm::vec3(0.f, 1.f, 0.f));
-		model.top() = glm::scale(model.top(), glm::vec3(2.f));
-
-		main_shader.send_model(model.top());
-
-		glm::mat3 normal_transformation = glm::transpose(glm::inverse(glm::mat3(camera->view * model.top())));
-		main_shader.send_normal_transformation(normal_transformation);
-		pyramids->drawObject(0);
 	}
 	model.pop();
 
@@ -182,6 +177,21 @@ void Scene::display_model(float aspect_ratio) {
 		glm::mat3 normal_transformation = glm::transpose(glm::inverse(glm::mat3(camera->view * model.top())));
 		main_shader.send_normal_transformation(normal_transformation);
 		sphyinx->drawObject(0);
+	}
+	model.pop();
+
+	// display pyramids
+	model.push(model.top());
+	{
+		model.top() = glm::translate(model.top(), glm::vec3(-0.5f, -0.5f, 1.5f));
+		model.top() = glm::rotate(model.top(), glm::radians(90.f), glm::vec3(0.f, 1.f, 0.f));
+		model.top() = glm::scale(model.top(), glm::vec3(2.f));
+
+		main_shader.send_model(model.top());
+
+		glm::mat3 normal_transformation = glm::transpose(glm::inverse(glm::mat3(camera->view * model.top())));
+		main_shader.send_normal_transformation(normal_transformation);
+		pyramids->drawObject(0);
 	}
 	model.pop();
 	Texture::unbind_texture();
@@ -218,33 +228,27 @@ void Scene::display_spaceship(float aspect_ratio) {
 	GLfloat magnitude = 1.f;
 	explosion_shader.send_magnitude(magnitude);
 
-	Texture::bind_texture(texid);
+	Texture::bind_texture(spaceship_tex_id);
 	model.push(model.top());
 	{
-		//glm::mat4 mvp = camera->projection * camera->view * model.top();
-
 		model.top() = glm::translate(model.top(), glm::vec3(s_x, s_y, 0.0f));
 		model.top() = glm::rotate(model.top(), glm::radians(-90.f), glm::vec3(0.f, 1.f, 0.f));
 		model.top() = glm::rotate(model.top(), glm::radians(20.f), glm::vec3(1.f, 0.f, 0.f));
 		model.top() = glm::scale(model.top(), glm::vec3(1.5f, 1.5f, 1.5f));
 
-		
-
 		float time = glfwGetTime();
 		explosion_shader.send_time(time);
-		if (time <= 10.25f) {
+		// animate the spaceship
+		if (time <= 10.55) {
 			s_x -= glfwGetTime() / 60.f;
 			s_y -= glfwGetTime() / 60.f;
 		}
-		else if (time > 10.25f){
+		else if (time > 10.55){
 			s_x = s_x;
 			s_y = s_y;
 		}
-		
 
 		explosion_shader.send_model(model.top());
-		//std::cout << glfwGetTime() << std::endl;
-		
 
 		glm::mat3 normal_transformation = glm::transpose(glm::inverse(glm::mat3(camera->view * model.top())));
 		main_shader.send_normal_transformation(normal_transformation);
