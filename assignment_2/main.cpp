@@ -62,7 +62,7 @@ void print_key_bindings() {
 	std::cout << "[W, A, S, D]  pan the camera/light up, left, down, right" << std::endl;
 	std::cout << "[ARROW_UP, ARROW_DOWN]  zoom the camera/light in, out" << std::endl;
 	//std::cout << "[ARROW_LEFT, ARROW_RIGHT, SPACE]  animation speed decrease, increase, stop" << std::endl;
-	std::cout << "[1, 2, 3]  view mode 1 (default view), view mode 2 (back view), view mode 3 (top view)" << std::endl;
+	//std::cout << "[1, 2, 3]  view mode 1 (default view), view mode 2 (back view), view mode 3 (top view)" << std::endl;
 	std::cout << std::endl;
 	std::cout << "[M] print menu" << std::endl;
 	std::cout << std::endl;
@@ -84,6 +84,10 @@ static void keyCallback(GLFWwindow* window, int key, int s, int action, int mods
 	if (key == 'L' && action == GLFW_PRESS) {
 		move_mode = 1;
 		std::cout << "|move_mode = Light| moving light" << std::endl;
+	}
+
+	if (key == 'M' && action == GLFW_PRESS) {
+		print_key_bindings();
 	}
 
 	if (move_mode == 0) { 

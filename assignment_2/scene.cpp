@@ -22,7 +22,6 @@ Scene::~Scene() {
 	if (debree) delete(debree);
 }
 
-
 /*
 * initialise scene
 * params:
@@ -239,11 +238,11 @@ void Scene::display_spaceship(float aspect_ratio) {
 		float time = glfwGetTime();
 		explosion_shader.send_time(time);
 		// animate the spaceship
-		if (time <= 10.55) {
+		if (time <= 10.35f) {
 			s_x -= glfwGetTime() / 60.f;
 			s_y -= glfwGetTime() / 60.f;
 		}
-		else if (time > 10.55){
+		else if (time > 10.35f){
 			s_x = s_x;
 			s_y = s_y;
 		}
@@ -291,7 +290,7 @@ void Scene::display_debree(float aspect_ratio) {
 void Scene::camera_keys(int key, int action) {
 	camera->translate(key);
 
-	if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
+	/*if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
 		camera->viewmode(1);
 		std::cout << "view mode " << std::to_string(1) << " (default view)" << std::endl;
 	}
@@ -302,7 +301,7 @@ void Scene::camera_keys(int key, int action) {
 	else if (key == GLFW_KEY_3 && action == GLFW_PRESS) {
 		camera->viewmode(3);
 		std::cout << "view mode " << std::to_string(3) << " (top view)" << std::endl;
-	}
+	}*/
 }
 
 /*
